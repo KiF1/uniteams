@@ -4,63 +4,62 @@ import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 
-
 interface Endereco {
   cep: string;
   estado: string;
   cidade: string;
+  bairro: string;
   rua: string;
   numero: string;
-  bairro: string;
 }
 
-
-interface Student {
+interface University {
   nome: string;
   email: string;
-  telefone: string;
   foto?: File;
-  matricula: string;
-  funcao_cargo: string;
+  cnpj: string;
+  telefone: string;
   endereco: Endereco;
   descricao?: string;
   senha: string;
   confirmarSenha: string;
 }
 
-export const useRegisterStudent = () => {
+export const useRegisterUniversity = () => {
   const navigate = useNavigate();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (dataForm: Student) => {
-      const { data: existingUser } = await supabase
-        .from("usuarios")
-        .select("email")
-        .eq("email", dataForm.email)
-        
-      if (existingUser && existingUser.length > 0) {
-        throw new Error("Este email já está cadastrado no sistema.");
-      }
-
+    mutationFn: async (dataForm: University) => {
       const { data: existingData, error: checkError } = await supabase
-        .from("estudantes")
-        .select("matricula, telefone")
-        .or(`matricula.eq.${dataForm.matricula},telefone.eq.${dataForm.telefone}`);
+        .from("universidades")
+        .select("cnpj, telefone")
+        .or(`cnpj.eq.${dataForm.cnpj},telefone.eq.${dataForm.telefone}`);
 
       if (checkError) {
         throw new Error(checkError.message || "Erro ao verificar dados existentes.");
       }
 
+      // Se encontrou dados existentes, verificar qual campo está duplicado
       if (existingData && existingData.length > 0) {
-        const duplicatedMatricula = existingData.some(item => item.matricula === dataForm.matricula);
+        const duplicatedCnpj = existingData.some(item => item.cnpj === dataForm.cnpj);
         const duplicatedPhone = existingData.some(item => item.telefone === dataForm.telefone);
 
-        if (duplicatedMatricula) {
-          throw new Error("Esta matrícula já está cadastrada no sistema.");
+        if (duplicatedCnpj) {
+          throw new Error("Este CNPJ já está cadastrado no sistema.");
         }
         if (duplicatedPhone) {
           throw new Error("Este telefone já está cadastrado no sistema.");
         }
+      }
+      
+      // Verificar duplicidade de email na tabela usuarios
+      const { data: existingUsers } = await supabase
+        .from("usuarios")
+        .select("email")
+        .eq("email", dataForm.email);
+        
+      if (existingUsers && existingUsers.length > 0) {
+        throw new Error("Este email já está cadastrado no sistema.");
       }
 
       let userId: string;
@@ -76,6 +75,7 @@ export const useRegisterStudent = () => {
       if (userCreated?.user) {
         userId = userCreated.user.id;
       } else if (errorUser?.message?.includes("User already registered")) {
+        // Usuário já existe: tenta logar para recuperar o ID
         const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
           email: dataForm.email,
           password: dataForm.senha,
@@ -96,7 +96,7 @@ export const useRegisterStudent = () => {
           const uuid = uuidv4();
           const ext = dataForm.foto.name.split(".").pop();
           const fileName = `${uuid}.${ext}`;
-          const filePath = `estudantes/${fileName}`;
+          const filePath = `universidades/${fileName}`;
 
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from("fotos")
@@ -116,8 +116,8 @@ export const useRegisterStudent = () => {
           .insert({
             id: userId,
             email: dataForm.email,
-            senha: dataForm.senha,
-            tipo_usuario: "estudante"
+            senha: dataForm.senha, // Nota: A senha já está criptografada no Supabase Auth
+            tipo_usuario: "universidade"
           })
           .select("id")
           .single();
@@ -126,39 +126,30 @@ export const useRegisterStudent = () => {
           throw new Error(errorUsuario?.message || "Erro ao criar o usuário na tabela.");
         }
 
-        // 4. Criar registro na tabela estudantes
-        const { data: estudante, error: errorEstudante } = await supabase
-          .from("estudantes")
+        // 4. Criar registro na tabela universidades
+        const { data: universidade, error: errorUniversidade } = await supabase
+          .from("universidades")
           .insert({
             id: userId,
             nome: dataForm.nome,
+            cnpj: dataForm.cnpj,
             telefone: dataForm.telefone,
-            matricula: dataForm.matricula,
-            funcao_cargo: dataForm.funcao_cargo,
-            endereco: {
-              cep: dataForm.endereco.cep,
-              estado: dataForm.endereco.estado,
-              cidade: dataForm.endereco.cidade,
-              rua: dataForm.endereco.rua,
-              numero: dataForm.endereco.numero,
-              bairro: dataForm.endereco.bairro
-            },
+            endereco: dataForm.endereco,
             descricao: dataForm.descricao || null,
             foto: photoUrl,
-            equipe_id: null,
           })
           .select("id")
           .single();
 
-        if (errorEstudante || !estudante) {
-          throw new Error(errorEstudante?.message || "Erro ao criar o estudante.");
+        if (errorUniversidade || !universidade) {
+          throw new Error(errorUniversidade?.message || "Erro ao criar a universidade.");
         }
 
         // 5. Armazenar na sessão
         sessionStorage.setItem("userId", userId);
-        sessionStorage.setItem("userType", "estudante");
+        sessionStorage.setItem("userType", "universidade");
 
-        return { userId };
+        return { userId, universidadeId: universidade.id };
       } catch (error) {
         // Rollback: remove a foto se enviada
         if (uploadedFilePath) {
@@ -169,9 +160,6 @@ export const useRegisterStudent = () => {
         if (userId) {
           // Remover da tabela usuarios
           await supabase.from("usuarios").delete().eq("id", userId);
-          
-          // Não é possível excluir diretamente do Auth no cliente,
-          // mas você poderia implementar uma função no servidor para isso
         }
 
         throw error;
@@ -179,7 +167,7 @@ export const useRegisterStudent = () => {
     },
 
     onSuccess: () => {
-      navigate(`/app/student`);
+      navigate(`/app/university`);
     },
 
     onError: (error) => {

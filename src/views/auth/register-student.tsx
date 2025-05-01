@@ -9,7 +9,17 @@ import { CameraIcon } from "lucide-react";
 import { applyPhoneMask } from "@/utils/mask-phone";
 import { removeMask } from "@/utils/remove-mask";
 import { useRegisterStudent } from "./hooks/use-create-student";
+import { applyCEPMask } from "@/utils/mask-cep";
 
+// Função para máscara de matrícula
+const applyMatriculaMask = (value: string): string => {
+  const numbers = value.replace(/\D/g, '');
+  if (numbers.length <= 4) {
+    return numbers;
+  } else {
+    return `${numbers.slice(0, 4)}-${numbers.slice(4, 8)}`;
+  }
+};
 
 const schema = z.object({
   nome: z.string().min(3, "Nome do estudante é obrigatório"),
@@ -24,9 +34,14 @@ const schema = z.object({
     .transform(removeMask)
     .refine((val) => val.length >= 10 && val.length <= 11, "Telefone deve ter entre 10 e 11 dígitos"),
   funcao_cargo: z.string().min(2, "Função/Cargo é obrigatório"),
-  endereco: z.string().min(5, "Endereço é obrigatório"),
+  cep: z.string().min(8, "CEP é obrigatório").transform(removeMask),
+  estado: z.string().min(2, "Estado é obrigatório"),
+  cidade: z.string().min(2, "Cidade é obrigatória"),
+  bairro: z.string().min(2, "Bairro é obrigatório"),
+  rua: z.string().min(2, "Rua é obrigatória"),
+  numero: z.string().min(1, "Número é obrigatório"),
   descricao: z.string().optional(),
-  universidade_id: z.string().uuid("Selecione uma universidade válida"),
+  equipe_id: z.string().optional(),
   senha: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
   confirmarSenha: z.string()
 }).refine((data) => data.senha === data.confirmarSenha, {
@@ -39,12 +54,21 @@ type SchemaType = z.infer<typeof schema>;
 const fieldsStudent = [
   { label: 'Nome Completo', name: 'nome' as const, placeholder: 'Insira o nome completo', mask: null },
   { label: 'E-mail', name: 'email' as const, placeholder: 'Insira o e-mail', mask: null },
-  { label: 'Matrícula', name: 'matricula' as const, placeholder: 'Insira a matrícula' },
+  { label: 'Matrícula', name: 'matricula' as const, placeholder: 'Insira a matrícula', mask: applyMatriculaMask },
   { label: 'Telefone', name: 'telefone' as const, placeholder: 'Insira o telefone', mask: applyPhoneMask },
   { label: 'Função/Cargo', name: 'funcao_cargo' as const, placeholder: 'Ex: Desenvoldedor Front-end', mask: null },
-  { label: 'Endereço', name: 'endereco' as const, placeholder: 'Insira o endereço completo', mask: null },
   { label: 'Senha', name: 'senha' as const, placeholder: 'Insira a senha', mask: null, type: 'password' },
   { label: 'Confirmar Senha', name: 'confirmarSenha' as const, placeholder: 'Confirme a senha', mask: null, type: 'password' },
+];
+
+// Campos de endereço
+const fieldsEndereco = [
+  { label: 'CEP', name: 'cep' as const, placeholder: '00000-000', mask: applyCEPMask },
+  { label: 'Estado', name: 'estado' as const, placeholder: 'UF', mask: null },
+  { label: 'Cidade', name: 'cidade' as const, placeholder: 'Nome da cidade', mask: null },
+  { label: 'Bairro', name: 'bairro' as const, placeholder: 'Nome do bairro', mask: null },
+  { label: 'Rua', name: 'rua' as const, placeholder: 'Nome da rua', mask: null },
+  { label: 'Número', name: 'numero' as const, placeholder: 'Número', mask: null },
 ];
 
 export const RegisterStudent = () => {
@@ -53,6 +77,7 @@ export const RegisterStudent = () => {
   const [maskedValues, setMaskedValues] = useState({
     telefone: "",
     matricula: "",
+    cep: "",
   });
 
   const { register, setValue, handleSubmit, formState: { errors } } = useForm<SchemaType>({
@@ -84,8 +109,22 @@ export const RegisterStudent = () => {
   const { mutate, isPending } = useRegisterStudent();
 
   const onSubmit = (data: SchemaType) => {
-    console.log(data)
-    mutate(data);
+    // Formatar o objeto final com o endereço em formato JSONB
+    const formattedData = {
+      ...data,
+      endereco: {
+        cep: data.cep,
+        estado: data.estado,
+        cidade: data.cidade,
+        bairro: data.bairro,
+        rua: data.rua,
+        numero: data.numero
+      }
+    };
+    
+    
+    console.log(formattedData);
+    mutate(formattedData);
   };
 
   return (
@@ -116,6 +155,7 @@ export const RegisterStudent = () => {
           onChange={onFileSelected} 
         />
         
+        {/* Campos principais do estudante */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
           {fieldsStudent.map((field) => (
             <div key={field.name} className="flex flex-col gap-2">
@@ -123,25 +163,63 @@ export const RegisterStudent = () => {
                 {field.label}
                 {field.mask ? (
                   <Input
-                    type="text"
+                    type={field.type || "text"}
                     placeholder={field.placeholder}
                     value={maskedValues[field.name as keyof typeof maskedValues] || ''}
                     onChange={(e) => handleMaskedInputChange(e, field.mask!, field.name)}
                   />
                 ) : (
                   <Input
-                    type="text"
+                    type={field.type || "text"}
                     placeholder={field.placeholder}
                     {...register(field.name)}
                   />
                 )}
               </Label>
-              {errors[field.name] && <span className="text-xs font-normal text-red-300">{errors[field.name]?.message}</span>}
+              {errors[field.name] && (
+                <span className="text-xs font-normal text-red-300">
+                  {errors[field.name]?.message as React.ReactNode}
+                </span>
+              )}
             </div>
           ))}
         </div>
         
-        <div className="flex flex-col gap-2">
+        {/* Seção de endereço */}
+        <div className="mt-4">
+          <h3 className="text-md text-gray-150 font-semibold mb-2">Endereço</h3>
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
+            {fieldsEndereco.map((field) => (
+              <div key={field.name} className="flex flex-col gap-2">
+                <Label className="w-full flex flex-col gap-2 text-sm text-gray-160 font-normal">
+                  {field.label}
+                  {field.mask ? (
+                    <Input
+                      type="text"
+                      placeholder={field.placeholder}
+                      value={maskedValues[field.name as keyof typeof maskedValues] || ''}
+                      onChange={(e) => handleMaskedInputChange(e, field.mask!, field.name)}
+                    />
+                  ) : (
+                    <Input
+                      type="text"
+                      placeholder={field.placeholder}
+                      {...register(field.name)}
+                    />
+                  )}
+                </Label>
+                {errors[field.name] && (
+                  <span className="text-xs font-normal text-red-300">
+                    {errors[field.name]?.message as React.ReactNode}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Descrição */}
+        <div className="flex flex-col gap-2 mt-4">
           <Label className="w-full flex flex-col gap-2 text-sm text-gray-160 font-normal">
             Descrição
             <Textarea
@@ -150,29 +228,19 @@ export const RegisterStudent = () => {
               {...register('descricao')}
             />
           </Label>
-          {errors.descricao && <span className="text-xs font-normal text-red-300">{errors.descricao.message}</span>}
+          {errors.descricao && (
+            <span className="text-xs font-normal text-red-300">
+              {errors.descricao.message as React.ReactNode}
+            </span>
+          )}
         </div>
-        
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
-          <div className="flex flex-col gap-2">
-            <Label className="w-full flex flex-col gap-2 text-sm text-gray-160 font-normal">
-              Universidade
-              {errors.universidade_id && <span className="text-xs font-normal text-red-300">{errors.universidade_id.message}</span>}
-              <select 
-                className="px-3 py-2 bg-white border border-gray-300 rounded-md text-xs" 
-                {...register('universidade_id')}
-              >
-                <option value="">Selecione uma universidade</option>
-                <option value="ecc89568-4c6e-4c4e-8ce0-8ef3da10d567">UFPE</option>
-                <option value="f2b8d721-4b1a-4254-8c22-65e3be99b3b9">UFRPE</option>
-              </select>
-            </Label>
-          </div>  
-          <button type="submit" disabled={isPending} className="w-full mt-auto p-2 h-[37px] bg-primary text-white text-sm font-medium rounded">
-            Cadastrar Estudante
-          </button>
-        </div>
-        
+        <button 
+          type="submit" 
+          disabled={isPending} 
+          className="w-full mt-auto p-2 h-[37px] bg-primary text-white text-sm font-medium rounded"
+        >
+          {isPending ? 'Cadastrando...' : 'Cadastrar Estudante'}
+        </button>
       </form>
     </div>
   );

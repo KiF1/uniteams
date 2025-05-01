@@ -10,7 +10,10 @@ import { validateCNPJ } from "@/utils/validateCNPJ";
 import { applyCNPJMask } from "@/utils/mask-cnpj";
 import { applyPhoneMask } from "@/utils/mask-phone";
 import { removeMask } from "@/utils/remove-mask";
+import { useRegisterCompany } from "./hooks/use-create-company";
+import { applyCEPMask } from "@/utils/mask-cep";
 
+// Schema único com todos os campos
 const schema = z.object({
   nome: z.string().min(3, "Nome da empresa é obrigatório"),
   email: z.string().email("E-mail inválido"),
@@ -23,7 +26,12 @@ const schema = z.object({
     .min(1, "Telefone é obrigatório")
     .transform(removeMask)
     .refine((val) => val.length >= 10 && val.length <= 11, "Telefone deve ter entre 10 e 11 dígitos"),
-  endereco: z.string().min(5, "Endereço é obrigatório"),
+  cep: z.string().min(8, "CEP é obrigatório").transform(removeMask),
+  estado: z.string().min(2, "Estado é obrigatório"),
+  cidade: z.string().min(2, "Cidade é obrigatória"),
+  bairro: z.string().min(2, "Bairro é obrigatório"),
+  rua: z.string().min(2, "Rua é obrigatória"),
+  numero: z.string().min(1, "Número é obrigatório"),
   descricao: z.string().optional(),
   senha: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
   confirmarSenha: z.string()
@@ -34,14 +42,24 @@ const schema = z.object({
 
 type SchemaType = z.infer<typeof schema>;
 
+// Campos principais da empresa
 const fieldsCompany = [
   { label: 'Nome da Empresa', name: 'nome' as const, placeholder: 'Insira o nome da empresa', mask: null },
   { label: 'E-mail', name: 'email' as const, placeholder: 'Insira o e-mail corporativo', mask: null },
   { label: 'CNPJ', name: 'cnpj' as const, placeholder: 'Insira o CNPJ', mask: applyCNPJMask },
   { label: 'Telefone', name: 'telefone' as const, placeholder: 'Insira o telefone da empresa', mask: applyPhoneMask },
-  { label: 'Endereço', name: 'endereco' as const, placeholder: 'Insira o endereço completo', mask: null },
   { label: 'Senha', name: 'senha' as const, placeholder: 'Insira a senha', mask: null, type: 'password' },
   { label: 'Confirmar Senha', name: 'confirmarSenha' as const, placeholder: 'Confirme a senha', mask: null, type: 'password' },
+];
+
+// Campos de endereço
+const fieldsEndereco = [
+  { label: 'CEP', name: 'cep' as const, placeholder: '00000-000', mask: applyCEPMask },
+  { label: 'Estado', name: 'estado' as const, placeholder: 'UF', mask: null },
+  { label: 'Cidade', name: 'cidade' as const, placeholder: 'Nome da cidade', mask: null },
+  { label: 'Bairro', name: 'bairro' as const, placeholder: 'Nome do bairro', mask: null },
+  { label: 'Rua', name: 'rua' as const, placeholder: 'Nome da rua', mask: null },
+  { label: 'Número', name: 'numero' as const, placeholder: 'Número', mask: null },
 ];
 
 export const RegisterCompany = () => {
@@ -50,6 +68,7 @@ export const RegisterCompany = () => {
   const [maskedValues, setMaskedValues] = useState({
     telefone: "",
     cnpj: "",
+    cep: "",
   });
 
   const { register, setValue, handleSubmit, formState: { errors } } = useForm<SchemaType>({
@@ -77,8 +96,22 @@ export const RegisterCompany = () => {
     setValue(fieldName, maskedValue, { shouldValidate: true });
   };
 
+  const { mutate, isPending } = useRegisterCompany();
+
   const onSubmit = (data: SchemaType) => {
-    console.log(data);
+    const formattedData = {
+      ...data,
+      endereco: {
+        cep: data.cep,
+        estado: data.estado,
+        cidade: data.cidade,
+        bairro: data.bairro,
+        rua: data.rua,
+        numero: data.numero
+      }
+    };
+    
+    mutate(formattedData);
   };
 
   return (
@@ -109,6 +142,7 @@ export const RegisterCompany = () => {
           onChange={onFileSelected} 
         />
         
+        {/* Campos principais da empresa */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
           {fieldsCompany.map((field) => (
             <div key={field.name} className="flex flex-col gap-2">
@@ -129,12 +163,46 @@ export const RegisterCompany = () => {
                   />
                 )}
               </Label>
-              {errors[field.name] && <span className="text-xs font-normal text-red-300">{errors[field.name]?.message}</span>}
+              {errors[field.name] && (
+  <span className="text-xs font-normal text-red-300">
+    {errors[field.name]?.message as React.ReactNode}
+  </span>
+)}
             </div>
           ))}
         </div>
         
-        <div className="flex flex-col gap-2">
+        {/* Seção de endereço */}
+        <div className="mt-4">
+          <h3 className="text-md text-gray-150 font-semibold mb-2">Endereço</h3>
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
+            {fieldsEndereco.map((field) => (
+              <div key={field.name} className="flex flex-col gap-2">
+                <Label className="w-full flex flex-col gap-2 text-sm text-gray-160 font-normal">
+                  {field.label}
+                  {field.mask ? (
+                    <Input
+                      type="text"
+                      placeholder={field.placeholder}
+                      value={maskedValues[field.name as keyof typeof maskedValues] || ''}
+                      onChange={(e) => handleMaskedInputChange(e, field.mask!, field.name)}
+                    />
+                  ) : (
+                    <Input
+                      type="text"
+                      placeholder={field.placeholder}
+                      {...register(field.name)}
+                    />
+                  )}
+                </Label>
+                {errors[field.name] && <span className="text-xs font-normal text-red-300">{errors[field.name]?.message}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Descrição */}
+        <div className="flex flex-col gap-2 mt-4">
           <Label className="w-full flex flex-col gap-2 text-sm text-gray-160 font-normal">
             Descrição
             <Textarea
@@ -143,10 +211,14 @@ export const RegisterCompany = () => {
               {...register('descricao')}
             />
           </Label>
-          {errors.descricao && <span className="text-xs font-normal text-red-300">{errors.descricao.message}</span>}
+          {errors.descricao && (
+            <span className="text-xs font-normal text-red-300">
+              {errors.descricao.message as React.ReactNode}
+            </span>
+          )}
         </div>
         
-        <button type="submit" className="w-full p-2 bg-primary text-white text-sm font-medium rounded mt-4">
+        <button type="submit" disabled={isPending} className="w-full p-2 bg-primary text-white text-sm font-medium rounded mt-4">
           Cadastrar Empresa
         </button>
       </form>

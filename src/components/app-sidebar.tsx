@@ -4,26 +4,29 @@ import logo from '../assets/logo.png';
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/services/supabase";
 import { queryClient } from "@/services/react-query"
+import { redirectPath } from "@/utils/redirect-path";
 
-const items = [
-  {
-    title: "Dashboard",
-    url: "/app/home",
-    icon: Home,
-  },
-  {
-    title: "Perfil",
-    url: "/app/user",
-    roles: ["admin", "secretary"],
-    icon: Users2,
-  }
-];
 
 export const AppSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
-
+  const typeUser = sessionStorage.getItem('userType')
+  
+  const pathRedirect = redirectPath(typeUser!);
+  
+  const items = [
+    {
+      title: "Dashboard",
+      url: `${pathRedirect}`,
+      icon: Home,
+    },
+    {
+      title: "Perfil",
+      url: `${pathRedirect}/edit`,
+      icon: Users2,
+    }
+  ];
+  
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {
@@ -37,7 +40,7 @@ export const AppSidebar = () => {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup className="p-0">
-          <img src={logo} className='w-fit h-fit px-2 pt-8 pb-8 bg-primary' />
+          <img src={logo} className='w-fit h-fit px-2 py-4' />
           <hr />
           <br />
           <SidebarGroupContent className="px-2">
@@ -55,7 +58,7 @@ export const AppSidebar = () => {
               <button 
                 type="button" 
                 onClick={logout} 
-                className="flex md:hidden bg-transparent border-0 items-center gap-2 p-2 hover:bg-primary hover:text-white text-sm font-normal text-gray-160 rounded-md"
+                className="flex bg-transparent border-0 items-center gap-2 p-2 hover:bg-primary hover:text-white text-sm font-normal text-gray-160 rounded-md"
               >
                 <LogOut className="w-4 h-4" />
                 Sair

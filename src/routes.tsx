@@ -1,29 +1,40 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { AppLayout } from './views/_layouts/app'
 import { AuthLayout } from './views/_layouts/auth'
 import { SignIn } from './views/auth/sign-in'
-import { ProtectedRoute } from './protected-route'
-import { Home } from './views/app/home/page'
 import { ChooseType } from './views/auth/choose-type'
 import { RegisterStudent } from './views/auth/register-student'
 import { RegisterCompany } from './views/auth/register-company'
 import { RegisterUniversity } from './views/auth/register-university'
+import { ProtectedRoute } from './protected-route'
+import { Home } from './views/app/university/home/page'
 
 export const router = createBrowserRouter([
-  // {
-  //   path: '/',
-  //   element: <Navigate to="/auth/sign-in" replace />,
-  // },
+  {
+    path: '/',
+    element: <Navigate to="/auth/sign-in" replace />,
+  },
   {
     path: '/app',
-    element: <ProtectedRoute allowedRoles={["admin", "minister", "treasurer", "secretary", "worker", "auditor"]} />,
+    element: <ProtectedRoute />,
     children: [
       {
         element: <AppLayout />,
         children: [
           {
-            path: 'home',
-            element: <ProtectedRoute allowedRoles={["admin", "minister", "treasurer", "secretary", "worker", "auditor"]} />,
+            path: 'university',
+            children: [
+              { path: '', element: <Home /> }
+            ],
+          },
+          {
+            path: 'company',
+            children: [
+              { path: '', element: <Home /> }
+            ],
+          },
+          {
+            path: 'student',
             children: [
               { path: '', element: <Home /> }
             ],
