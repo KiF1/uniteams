@@ -10,16 +10,7 @@ import { removeMask } from "@/utils/remove-mask";
 import { applyCNPJMask } from "@/utils/mask-cnpj";
 import { applyPhoneMask } from "@/utils/mask-phone";
 import { useRegisterUniversity } from "./hooks/use-create-university";
-
-// Função para máscara de CEP
-const applyCEPMask = (value: string): string => {
-  const numbers = value.replace(/\D/g, '');
-  if (numbers.length <= 5) {
-    return numbers;
-  } else {
-    return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
-  }
-};
+import { applyCEPMask } from "@/utils/mask-cep";
 
 // Schema único com todos os campos
 const schema = z.object({

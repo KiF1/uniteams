@@ -54,7 +54,7 @@ export const useLogin = () => {
     },
 
     onSuccess: ({ redirectTo }) => {
-      navigate(redirectTo);
+      navigate(`${redirectTo}/dashboard`);
     },
 
     onError: (error) => {

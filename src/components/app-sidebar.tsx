@@ -17,12 +17,14 @@ export const AppSidebar = () => {
   const items = [
     {
       title: "Dashboard",
-      url: `${pathRedirect}`,
+      route: "dashboard",
+      url: `${pathRedirect}/dashboard`,
       icon: Home,
     },
     {
       title: "Perfil",
-      url: `${pathRedirect}/edit`,
+      route: "edit",
+      url: `${pathRedirect}/edit/1`,
       icon: Users2,
     }
   ];
@@ -47,7 +49,7 @@ export const AppSidebar = () => {
             <SidebarMenu>
               {items.map(item => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location.pathname.includes(item.url)} onClick={() => navigate(`${item.url}`)}>
+                  <SidebarMenuButton asChild isActive={location.pathname.includes(item.route)} onClick={() => navigate(`${item.url}`)}>
                     <a className="cursor-pointer">
                       <item.icon />
                       <span>{item.title}</span>

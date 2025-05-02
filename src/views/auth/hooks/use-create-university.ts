@@ -167,7 +167,7 @@ export const useRegisterUniversity = () => {
     },
 
     onSuccess: () => {
-      navigate(`/app/university`);
+      navigate(`/app/university/dashboard`);
     },
 
     onError: (error) => {

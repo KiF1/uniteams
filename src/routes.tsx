@@ -8,6 +8,8 @@ import { RegisterCompany } from './views/auth/register-company'
 import { RegisterUniversity } from './views/auth/register-university'
 import { ProtectedRoute } from './protected-route'
 import { Home } from './views/app/university/home/page'
+import { EditUniversity } from './views/app/university/edit/page'
+import { ViewUniversity } from './views/app/university/view/page'
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +26,9 @@ export const router = createBrowserRouter([
           {
             path: 'university',
             children: [
-              { path: '', element: <Home /> }
+              { path: 'dashboard', element: <Home /> },
+              { path: 'edit/:id', element: <EditUniversity /> },
+              { path: 'view/:id', element: <ViewUniversity /> },
             ],
           },
           {
