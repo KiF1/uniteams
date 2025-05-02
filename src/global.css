@@ -1,3 +1,5 @@
+/* Modificações propostas para o seu CSS global */
+
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 @tailwind base;
 @tailwind components;
@@ -5,39 +7,24 @@
 
 * {
   font-family: "DM Sans", sans-serif;
+  box-sizing: border-box;
 }
 
 html,
-body,
-* {
+body {
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: #dfdfe6 transparent; /* Cor do scroll e da trilha */
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100vw;
 }
 
-body {
-  background-color: white !important;
-  overflow-x: hidden !important;
-}
-
-@layer utilities {
-  .custom-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: #dfdfe6 transparent;
-  }
-
-  .custom-scroll::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  .custom-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .custom-scroll::-webkit-scrollbar-thumb {
-    background: #dfdfe6;
-    border-radius: 3px;
-  }
+/* Permitir overflow em elementos específicos quando necessário, mas controlar por padrão */
+.embla__container {
+  max-width: 100%;
+  overflow-x: visible;
 }
 
 @layer base {
@@ -74,15 +61,45 @@ body {
   }
 }
 
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #dfdfe6 transparent;
+  }
+
+  .custom-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background: #dfdfe6;
+    border-radius: 3px;
+  }
+}
+
 /* Personaliza a largura da barra de rolagem */
 ::-webkit-scrollbar {
-  width: 6px !important; /* Deixa a barra mais fina */
+  width: 6px !important;
   height: 6px !important;
 }
 
 /* Cor do fundo da barra de rolagem */
 ::-webkit-scrollbar-track {
-  background: transparent !important; /* Cor do fundo da trilha */
+  background: transparent !important;
 }
 
 /* Cor da barra em si */
