@@ -7,6 +7,9 @@ import { queryClient } from './services/react-query'
 import { router } from './routes'
 import { Toaster } from "@/components/ui/sonner"
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>

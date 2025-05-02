@@ -20,7 +20,7 @@ interface Props {
 
 export const TeamCard = ({ team }: Props) => {
   return (
-    <Card className="h-full border shadow-sm grid md:grid-cols-[1fr_0.1fr_1fr]">
+    <Card className="w-full h-full border shadow-sm grid md:grid-cols-[1fr_0.1fr_1fr]">
       <div>
         <CardHeader>
           <div className="flex items-start gap-2">
@@ -53,7 +53,7 @@ export const TeamCard = ({ team }: Props) => {
         <h4 className="text-sm font-medium mb-2 text-gray-150">Membros</h4>
         
         {/* Scrollable team members section */}
-        <div className="w-full max-h-72 overflow-y-auto pr-2">
+        <div className="w-full max-h-60 overflow-y-auto pr-2">
           {team.members.map((member, index) => (
             <div key={index} className="flex items-start gap-2 mb-3">
               <div className="w-16 h-16 rounded-full border-2 border-gray-800 overflow-hidden">

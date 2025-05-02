@@ -10,7 +10,7 @@ export function AppLayout() {
         <div className='flex items-center justify-between'>
           <SidebarTrigger />
         </div>
-        <section className='py-10 md:mx-2'>
+        <section className='w-full py-10 md:mx-2'>
           <Outlet />
         </section>
       </main>

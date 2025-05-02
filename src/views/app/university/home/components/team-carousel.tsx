@@ -1,10 +1,4 @@
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { TeamCard } from "./team-card";
 
 export const TeamCarousel = () => {
@@ -78,27 +72,20 @@ export const TeamCarousel = () => {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto my-8">
       <Carousel
         opts={{
           align: "start",
-          loop: true,
-          slidesToScroll: 2
+          loop: true
         }}
-        className="w-full"
+        className="absolute w-full mt-20"
       >
         <CarouselContent>
           {teams.map((team, index) => (
-            <CarouselItem key={index} className="basis-full lg:basis-full xl:basis-1/2">
+            <CarouselItem key={index} className="basis-[80%] md:basis-[80%] lg:basis-[80%] xl:basis-1/2">
               <TeamCard team={team} />
             </CarouselItem>
           ))}
         </CarouselContent>
-        <div className="flex justify-end gap-2 mt-4">
-          <CarouselPrevious />
-          <CarouselNext />
-        </div>
       </Carousel>
-    </div>
   );
 };
