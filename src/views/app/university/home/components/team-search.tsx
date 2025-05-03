@@ -101,9 +101,9 @@ export const TeamSearch = () => {
           Erro ao carregar equipes: {error?.message || 'Tente novamente mais tarde.'}
         </div>
       ) : teams.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <span className="text-sm font-semibold text-gray-150">
           Nenhuma equipe encontrada. Tente outra pesquisa.
-        </div>
+        </span>
       ) : (
         <>
           <div className="space-y-4 mt-12 max-h-[350px] overflow-y-auto pr-4 mb-4">

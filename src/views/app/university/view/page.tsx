@@ -1,13 +1,24 @@
 import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Eye, Mail, MapPinned, MessageSquare, PhoneCall } from "lucide-react"
-import { useSearchParams } from "react-router-dom";
+import { ArrowRight, Clock, Eye, Mail, MapPinned, MessageSquare, PhoneCall } from "lucide-react"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { z } from "zod";
+import { useRecommendedTeams, useViewUniversity } from "./hooks/user-view-university";
+import { applyPhoneMask } from "@/utils/mask-phone";
+import { getFullImageUrl } from "@/utils/photo-user";
+import photo from '@/assets/photo.png'
+import { formatTime } from "@/utils/format-date";
 
 export const ViewUniversity = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const pageIndex = z.coerce.number().transform((page) => page - 1).parse(searchParams.get('page') ?? '1');
+  const navigate = useNavigate();
+  const userId = sessionStorage.getItem('userId');
+
+  const { universityId } = useParams<{ universityId: string }>();
+  const { data: university } = useViewUniversity(universityId || '');
+  const { data: teamsData } = useRecommendedTeams(universityId || '', pageIndex + 1, 10);
 
   const handlePaginate = (pageIndex: number) => {
     setSearchParams((prev) => {
@@ -16,110 +27,100 @@ export const ViewUniversity = () => {
       return prev
     })
   }
-    
-  const teams = [
-    {
-      id: 1,
-      name: 'Foursys',
-      logo: "https://lwaoakagvhobpgebthjz.supabase.co/storage/v1/object/public/fotos/estudantes/e60e8329-e4e3-42c1-9126-adceee62a239.jpg",
-      institution: 'Centro Universitário Maurício de Nassau'
-    },
-    {
-      id: 2,
-      name: 'Superbid',
-      logo: "https://lwaoakagvhobpgebthjz.supabase.co/storage/v1/object/public/fotos/estudantes/e60e8329-e4e3-42c1-9126-adceee62a239.jpg",
-      institution: 'Centro Universitário Maurício de Nassau'
-    },
-    {
-      id: 3,
-      name: 'Pegasus',
-      logo: "https://lwaoakagvhobpgebthjz.supabase.co/storage/v1/object/public/fotos/estudantes/e60e8329-e4e3-42c1-9126-adceee62a239.jpg",
-      institution: 'Centro Universitário Maurício de Nassau'
-    },
-    {
-      id: 4,
-      name: 'UrbanCraft',
-      logo: "https://lwaoakagvhobpgebthjz.supabase.co/storage/v1/object/public/fotos/estudantes/e60e8329-e4e3-42c1-9126-adceee62a239.jpg",
-      institution: 'Centro Universitário Maurício de Nassau'
-    },
-    {
-      id: 5,
-      name: 'Pixel Perfection',
-      logo: "https://lwaoakagvhobpgebthjz.supabase.co/storage/v1/object/public/fotos/estudantes/e60e8329-e4e3-42c1-9126-adceee62a239.jpg",
-      institution: 'Centro Universitário Maurício de Nassau'
-    }
-  ];
+
+  const redirectToEdit = () => {
+    navigate(`/app/university/edit/${universityId}`);
+  }
 
   return(
     <section className="w-full grid grid-cols-1 lg:grid-cols-[0.65fr_1fr] xl:grid-cols-[0.25fr_1fr] gap-6 md:gap-12">
       <div className="w-full rounded-lg border flex flex-col border-gray-800 shadow-xl h-fit">
         <div className="w-full h-32 bg-primary rounded-t-lg" />
         <div className="relative mx-auto -mt-16">
-          <img 
-            src='https://lwaoakagvhobpgebthjz.supabase.co/storage/v1/object/public/fotos/estudantes/e60e8329-e4e3-42c1-9126-adceee62a239.jpg'
-            className={`w-32 h-32 rounded-full border-4 border-gray-800 'object-contain '}`}
-          />
+            <img 
+              src={getFullImageUrl(university?.foto) || photo} 
+              className={`w-32 h-32 rounded-full border-4 border-gray-800 ${university?.foto ? 'object-cover' : 'object-contain p-3 bg-primary'}`}
+            />
         </div>
         <div className="w-full px-6 pb-12 flex flex-col gap-1 mt-4">
-          <h1 className="text-gray-150 font-bold text-base">Universidade Uninassau</h1>
+          <h1 className="text-gray-150 font-bold text-base">{university?.nome}</h1>
           <div className="flex items-center gap-2">
             <Mail className="w-3 h-3" />
-            <strong className="text-gray-160 font-normal text-sm ">universidade@gmail.com</strong>
+            <strong className="text-gray-160 font-normal text-xs">{university?.email}</strong>
           </div>
           <div className="flex items-center gap-2">
             <PhoneCall className="w-3 h-3" />
-            <strong className="text-gray-160 font-normal text-xs">(81) 98834-2314</strong>
+            <strong className="text-gray-160 font-normal text-xs">{university?.telefone && applyPhoneMask(university?.telefone)}</strong>
           </div>
           <div className="flex items-center gap-2">
             <MapPinned className="w-3 h-3" />
-            <span className="text-gray-160 font-normal text-xs">Rua Local H, 107 - Recife | PE</span>
+            <span className="text-gray-160 font-normal text-xs">{university?.endereco.rua}, {university?.endereco.numero} - {university?.endereco.cidade} | {university?.endereco.bairro}</span>
           </div>
+          {universityId === userId && (
+            <button onClick={redirectToEdit} className="bg-primary px-4 py-2 mt-6 w-full rounded-md text-center text-sm font-normal text-white flex items-center justify-center gap-2">
+              Editar Universidade
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
       <div className="w-full rounded-lg border flex flex-col border-gray-800 shadow-xl gap-4 p-8">
         <div className="grid gap-2">
           <strong className="text-lg font-semibold text-gray-150">Descrição</strong>
-          <p className="mb-0 font-normal text-gray-160 text-sm">Lorem ipsum dolor sit amet. Eos fuga nihil qui exercitationem velit aut suscipit laudantium non perspiciatis ipsum. Sed laboriosam omnis aut vitae quia a galisum earum in quia iste. Qui dolorem reiciendis non rerum harum est tempore quam. Et doloribus deleniti aut nesciunt Quis At ratione earum At magnam blanditiis.
-            Quo debitis dolores et enim porro aut nihil quod a doloremque consequatur. Qui fugiat molestiae ut velit deserunt non dolorum vitae ut sunt voluptas ut autem sapiente et deleniti accusamus. Sed nostrum reprehenderit vel optio aperiam est modi facere!</p>
+          <p className="mb-0 font-normal text-gray-160 text-sm whitespace-pre-line">{university?.descricao}</p>
         </div>
-        <strong className="text-lg font-semibold text-gray-150 mb-2">Equipes Recomendadas</strong>
-        <div className="max-h-[240px] overflow-y-auto grid lg:grid-cols-2 gap-6 pr-4 mb-4">
-          {teams.map(team => (
-            <div key={team.id} className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-800 pb-6">
-              <div className="flex-1 flex items-start">
-                <img 
-                  src={team.logo} 
-                  className="w-20 h-20 rounded-full object-cover border-2 border-gray-800"
-                />
-                <div className="ml-3 grid">
-                  <p className="font-medium text-lg text-gray-150">{team.name}</p>
-                  <p className="font-medium text-xs text-gray-150">equipe@gmail.com</p>
-                  <p className="font-medium text-xs text-gray-150">12/04/2025 | 6 Projetos</p>
-                </div>
-              </div>
-              <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
+        {teamsData && teamsData.total > 0 && (
+          <>
+            <strong className="text-lg font-semibold text-gray-150 mb-2">Equipes Recomendadas</strong>
+            <div className="max-h-[240px] overflow-y-auto grid lg:grid-cols-2 gap-6 pr-4 mb-4">
+              {teamsData.data.map(team => (
+                <div key={team.id} className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-800 pb-6">
+                  <div className="flex-1 flex items-start">
+                    <img 
+                      src={getFullImageUrl(team.foto) || photo} 
+                      className="w-16 h-16 rounded-full object-cover border-2 bg-primary border-gray-800"
+                    />
+                    <div className="ml-3 grid">
+                      <strong className="font-medium text-base text-gray-150">{team.nome}</strong>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3 h-3" />
+                        <strong className="text-gray-160 font-normal text-xs">{formatTime(team.created_at)}</strong>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-3 h-3" />
+                        <strong className="text-gray-160 font-normal text-xs">{team.email}</strong>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <PhoneCall className="w-3 h-3" />
+                        <strong className="text-gray-160 font-normal text-xs">{team?.telefone && applyPhoneMask(team?.telefone)}</strong>
+                      </div>
+                    </div>
+                  </div>
+                  <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
 
-              <div className="w-fit grid grid-cols-2 md:grid-cols-1 jus md:justify-items-end gap-2">
-                <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
-                  <Eye className="h-4 w-4 mr-1" />
-                  Visualizar
-                </Button>
-                <Button className="text-gray-160 w-fit text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
-                  <MessageSquare className="h-4 w-4 mr-1" />
-                  Contato
-                </Button>
-              </div>
+                  <div className="w-fit grid grid-cols-2 md:grid-cols-1 jus md:justify-items-end gap-2">
+                    <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
+                      <Eye className="h-4 w-4 mr-1" />
+                      Visualizar
+                    </Button>
+                    <Button className="text-gray-160 w-fit text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
+                      <MessageSquare className="h-4 w-4 mr-1" />
+                      Contato
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="grid gap-4 pr-8 mt-auto">
-          <Pagination
-            pageIndex={pageIndex}
-            totalCount={teams.length}
-            perPage={10}
-            onPageChange={handlePaginate}
-          />
-        </div>
+            <div className="grid gap-4 pr-8 mt-auto">
+              <Pagination
+                pageIndex={pageIndex}
+                totalCount={teamsData.total}
+                perPage={10}
+                onPageChange={handlePaginate}
+              />
+            </div>
+          </>
+        )}
       </div>
     </section>
   )
