@@ -7,9 +7,15 @@ import { RegisterStudent } from './views/auth/register-student'
 import { RegisterCompany } from './views/auth/register-company'
 import { RegisterUniversity } from './views/auth/register-university'
 import { ProtectedRoute } from './protected-route'
-import { Home } from './views/app/university/home/page'
+import { HomeUniversity } from './views/app/university/home/page'
 import { EditUniversity } from './views/app/university/edit/page'
 import { ViewUniversity } from './views/app/university/view/page'
+import { HomeStudent } from './views/app/student/home/page'
+import { EditStudent } from './views/app/student/edit/page'
+import { ViewStudent } from './views/app/student/view/page'
+import { HomeStudentNoTeam } from './views/app/student/no-team/home/page'
+import { ViewStudentNoTeam } from './views/app/student/no-team/view/page'
+import { TeamForm } from './views/app/student/no-team/team-form/page'
 
 export const router = createBrowserRouter([
   {
@@ -26,7 +32,7 @@ export const router = createBrowserRouter([
           {
             path: 'university',
             children: [
-              { path: 'dashboard', element: <Home /> },
+              { path: 'dashboard', element: <HomeUniversity /> },
               { path: 'edit/:id', element: <EditUniversity /> },
               { path: 'view/:id', element: <ViewUniversity /> },
             ],
@@ -34,13 +40,24 @@ export const router = createBrowserRouter([
           {
             path: 'company',
             children: [
-              { path: '', element: <Home /> }
+              { path: '', element: <HomeUniversity /> }
             ],
           },
           {
             path: 'student',
             children: [
-              { path: '', element: <Home /> }
+              { path: 'dashboard', element: <HomeStudent /> },
+              { path: 'edit/:id', element: <EditStudent /> },
+              { path: 'view/:id', element: <ViewStudent /> },
+            ],
+          },
+          {
+            path: 'student-no-team',
+            children: [
+              { path: 'dashboard', element: <HomeStudentNoTeam /> },
+              { path: 'team', element: <TeamForm /> }, // Adicionar equipe
+              { path: 'team/:id', element: <TeamForm /> }, // Editar equipe
+              { path: 'view/:id', element: <ViewStudentNoTeam /> },
             ],
           },
         ]

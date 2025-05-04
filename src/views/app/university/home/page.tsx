@@ -4,7 +4,7 @@ import { TeamSearch } from "./components/team-search"
 import { Metrics } from "./components/metrics"
 import { DropdownFilter } from "./components/dropdown-filter"
 
-export const Home = () => {
+export const HomeUniversity = () => {
   return (
     <section className="w-full grid gap-4">
       <AppTitle title="Solicitações de Recomendação" text="Acompanhe as solicitações das equipes!" />
