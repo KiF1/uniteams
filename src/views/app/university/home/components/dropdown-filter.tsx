@@ -1,8 +1,20 @@
 import { Button } from "@/components/ui/button"
-import {  DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuGroup, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu"
 import { SlidersHorizontal } from "lucide-react"
 
-export const DropdownFilter = () => {
+interface DropdownFilterProps {
+  onStatusChange: (status: string) => void;
+}
+
+export const DropdownFilter = ({ onStatusChange }: DropdownFilterProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -14,16 +26,16 @@ export const DropdownFilter = () => {
         <DropdownMenuLabel>Status das Solicitações</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onStatusChange('todas')}>
             Todas
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onStatusChange('pendente')}>
             Pendentes
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onStatusChange('aprovada')}>
             Aprovadas
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onStatusChange('recusada')}>
             Reprovadas
           </DropdownMenuItem>
         </DropdownMenuGroup>

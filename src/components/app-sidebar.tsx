@@ -10,6 +10,7 @@ import { redirectPath } from "@/utils/redirect-path";
 export const AppSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const idUser = sessionStorage.getItem('userId')
   const typeUser = sessionStorage.getItem('userType')
   
   const pathRedirect = redirectPath(typeUser!);
@@ -23,8 +24,8 @@ export const AppSidebar = () => {
     },
     {
       title: "Perfil",
-      route: "edit",
-      url: `${pathRedirect}/edit/1`,
+      route: "view",
+      url: `${pathRedirect}/view/${idUser}`,
       icon: Users2,
     }
   ];

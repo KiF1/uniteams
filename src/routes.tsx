@@ -32,9 +32,15 @@ export const router = createBrowserRouter([
           {
             path: 'university',
             children: [
+<<<<<<< HEAD
               { path: 'dashboard', element: <HomeUniversity /> },
               { path: 'edit/:id', element: <EditUniversity /> },
               { path: 'view/:id', element: <ViewUniversity /> },
+=======
+              { path: 'dashboard', element: <Home /> },
+              { path: 'edit/:universityId', element: <EditUniversity /> },
+              { path: 'view/:universityId', element: <ViewUniversity /> },
+>>>>>>> caa057835fb49282c326e503aaf08b99ea648b4b
             ],
           },
           {

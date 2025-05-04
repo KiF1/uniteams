@@ -13,12 +13,16 @@ import { applyPhoneMask } from "@/utils/mask-phone";
 import { AppTitle } from "@/components/app-title";
 import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { applyCEPMask } from "@/utils/mask-cep";
+import { useGetUniversity } from "./hooks/use-fetch-university";
+import { useParams } from "react-router-dom";
+import { useUpdateUniversity } from "./hooks/use-edit-university";
+import { getFullImageUrl } from "@/utils/photo-user";
 
 // Schema de validação com zod
 const universitySchema = z.object({
   nome: z.string().min(3, "Nome da universidade é obrigatório"),
   email: z.string().email("E-mail inválido"),
-  foto: z.instanceof(File).optional(),
+  foto: z.union([z.instanceof(File), z.string()]).optional(),
   cnpj: z.string({ required_error: "O CNPJ é obrigatório" })
     .transform(removeMask)
     .refine((val) => val.length === 14, "CNPJ deve ter 14 dígitos"),
@@ -56,22 +60,9 @@ const allFields = [
 
 export const EditUniversity = () => {
   const [preview, setPreview] = useState<string | null>(null);
-  const university = {
-    id: "1",
-    nome: "Centro Universitário Maurício de Nassau",
-    email: "uninassau@redencacional.com",
-    foto: undefined,
-    cnpj: "62894514000185",
-    telefone: "8137655423",
-    cep: "50000000",
-    estado: "Pernambuco",
-    cidade: "Recife",
-    bairro: "Centro",
-    rua: "Rua Principal",
-    numero: "123",
-    descricao: "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum"
-  }
   
+  const { universityId } = useParams<{ universityId: string }>();
+  const { data: university } = useGetUniversity(universityId || "");
   const [maskedValues, setMaskedValues] = useState({
     telefone: "",
     cnpj: "",
@@ -99,25 +90,34 @@ export const EditUniversity = () => {
   // Preencher o formulário quando os dados da universidade mudarem
   useEffect(() => {
     if (university) {
-      methods.reset(university as UniversityFormData);
-      
+      methods.reset({
+        nome: university.nome,
+        email: university.email,
+        foto: university.foto || undefined,
+        cnpj: university.cnpj,
+        telefone: university.telefone,
+        cep: university.endereco.cep,
+        estado: university.endereco.estado,
+        cidade: university.endereco.cidade,
+        bairro: university.endereco.bairro,
+        rua: university.endereco.rua,
+        numero: university.endereco.numero,
+        descricao: university.descricao || undefined,
+      });
+
       // Atualizar os valores mascarados
       setMaskedValues({
         telefone: applyPhoneMask(university.telefone || ""),
         cnpj: applyCNPJMask(university.cnpj || ""),
-        cep: applyCEPMask(university.cep || ""),
+        cep: applyCEPMask(university.endereco.cep || ""),
       });
 
       // Se tiver uma foto, mostrar preview
       if (university.foto) {
-        if (typeof university.foto === 'string') {
-          setPreview(university.foto);
-        } else {
-          setPreview(URL.createObjectURL(university.foto));
-        }
+        setPreview(getFullImageUrl(university.foto));
       }
     }
-  }, []);
+  }, [university]);
 
   const onFileSelected = (event: ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -140,20 +140,25 @@ export const EditUniversity = () => {
     methods.setValue(fieldName, maskedValue, { shouldValidate: true });
   }, [methods]);
 
+  const { mutate, isPending } = useUpdateUniversity();
+
   const onSubmit = (data: UniversityFormData) => {
-    // Formatar dados antes de salvar
+
+    const { cep, estado, cidade, bairro, rua, numero, ...dataWithoutAddress } = data;
     const formattedData = {
-      ...data,
+      ...dataWithoutAddress,
+      id: universityId!,
       endereco: {
-        cep: data.cep,
-        estado: data.estado,
-        cidade: data.cidade,
-        bairro: data.bairro,
-        rua: data.rua,
-        numero: data.numero
+        cep,
+        estado,
+        cidade,
+        bairro,
+        rua,
+        numero
       }
     };
-    console.log(formattedData)
+
+    mutate(formattedData)
   };
 
   return (
@@ -258,6 +263,7 @@ export const EditUniversity = () => {
             <div className="flex gap-4 mt-auto">
               <Button 
                 type="submit" 
+                disabled={isPending}
                 className="bg-primary hover:bg-primary/90 text-white px-8 text-sm font-semibold flex items-center gap-2"
               >
                 <CheckCheck />
@@ -265,6 +271,7 @@ export const EditUniversity = () => {
               </Button>
               <Button 
                 type="button" 
+                disabled={isPending}
                 variant="outline" 
                 className="px-8 text-sm font-semibold flex items-center gap-2"
                 onClick={() => window.history.back()}

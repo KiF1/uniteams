@@ -133,6 +133,7 @@ export const useRegisterUniversity = () => {
             id: userId,
             nome: dataForm.nome,
             cnpj: dataForm.cnpj,
+            email: dataForm.email,
             telefone: dataForm.telefone,
             endereco: dataForm.endereco,
             descricao: dataForm.descricao || null,

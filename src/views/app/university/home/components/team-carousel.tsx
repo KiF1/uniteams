@@ -7,7 +7,7 @@ export const TeamCarousel = () => {
 
   return (
     <>
-      {teams ? (
+      {teams && teams.length > 0 ? (
         <div className="w-full max-w-full overflow-hidden">
           <Carousel
             opts={{
@@ -34,7 +34,7 @@ export const TeamCarousel = () => {
           </Carousel>
         </div>
       ) : (
-        <span className="text-sm font-normal text-gray-160">Não existe solicitações de recomendações!</span>
+        <span className="text-sm font-semibold text-gray-150">Não existe solicitações de recomendações no momento, busque novamente mais tarde!</span>
       )}
     </>
   );

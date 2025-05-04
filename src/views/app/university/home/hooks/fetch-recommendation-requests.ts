@@ -1,4 +1,3 @@
- 
 import { supabase } from "@/services/supabase";
 import { useQuery } from "@tanstack/react-query";
 
@@ -30,11 +29,28 @@ export const useFetchRecommendationRequests = () => {
       if (!universidadeId) {
         throw new Error("ID da universidade não encontrado");
       }
-      
-      // Get teams related to university and don't have a recommendation yet
-      // We need to find teams that:
-      // 1. Belong to the university (equipe.universidade_id = universidadeId)
-      // 2. Don't have a recommendation (not in recomendacoes_universidade with this universidadeId)
+        
+      // Get teams with pending recommendations for this university
+      const { data: recomendacoesData, error: recomendacoesError } = await supabase
+        .from("recomendacoes_universidade")
+        .select("equipe_id")
+        .eq("universidade_id", universidadeId)
+        .eq("status", "pendente")
+        .order("created_at", { ascending: false })
+        .limit(10);
+              
+      if (recomendacoesError) {
+        throw new Error(`Erro ao buscar equipes pendentes: ${recomendacoesError.message}`);
+      }
+        
+      if (!recomendacoesData || recomendacoesData.length === 0) {
+        return [];
+      }
+
+      // Extract team IDs
+      const equipeIds = recomendacoesData.map(rec => rec.equipe_id);
+        
+      // Get team details
       const { data: equipesData, error: equipesError } = await supabase
         .from("equipes")
         .select(`
@@ -44,45 +60,19 @@ export const useFetchRecommendationRequests = () => {
           created_at,
           descricao
         `)
-        .eq("universidade_id", universidadeId)
-        .limit(10);
-        
+        .in("id", equipeIds);
+
       if (equipesError) {
-        throw new Error(`Erro ao buscar equipes: ${equipesError.message}`);
+        throw new Error(`Erro ao buscar detalhes das equipes: ${equipesError.message}`);
       }
-      
+
       if (!equipesData || equipesData.length === 0) {
         return [];
       }
-      
-      // Extract team IDs
-      const equipeIds = equipesData.map(equipe => equipe.id);
-      
-      // Get recommendations for these teams
-      const { data: recomendacoesData, error: recomendacoesError } = await supabase
-        .from("recomendacoes_universidade")
-        .select("equipe_id")
-        .eq("universidade_id", universidadeId)
-        .in("equipe_id", equipeIds);
         
-      if (recomendacoesError) {
-        throw new Error(`Erro ao buscar recomendações: ${recomendacoesError.message}`);
-      }
-      
-      // Filter out teams that already have recommendations
-      const recomendacoesEquipeIds = recomendacoesData?.map(rec => rec.equipe_id) || [];
-      const equipeSemRecomendacao = equipesData.filter(
-        equipe => !recomendacoesEquipeIds.includes(equipe.id)
-      );
-      
-      // If no teams without recommendations, return empty array
-      if (equipeSemRecomendacao.length === 0) {
-        return [];
-      }
-      
       // Get team members for each team
       const equipesCompletas = await Promise.all(
-        equipeSemRecomendacao.map(async (equipe) => {
+        equipesData.map(async (equipe) => {
           // Get members of the team
           const { data: membrosData, error: membrosError } = await supabase
             .from("estudantes")
@@ -94,7 +84,7 @@ export const useFetchRecommendationRequests = () => {
               telefone
             `)
             .eq("equipe_id", equipe.id);
-            
+                    
           if (membrosError) {
             console.error(`Erro ao buscar membros da equipe ${equipe.id}: ${membrosError.message}`);
             return {
@@ -102,16 +92,16 @@ export const useFetchRecommendationRequests = () => {
               membros: []
             };
           }
-          
+                
           return {
             ...equipe,
             membros: membrosData || []
           };
         })
       );
-      
+        
       return equipesCompletas;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000
   });
 };
