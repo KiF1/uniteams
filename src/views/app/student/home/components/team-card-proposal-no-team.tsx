@@ -42,7 +42,7 @@ export const TeamCardProposalNoTeam = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {teams.slice(0, 3).map(team => (
-            <div key={team.id} className="flex flex-row items-start justify-between border border-gray-800 rounded-md p-6">
+            <div key={team.id} className="flex flex-row items-start justify-between border border-gray-800 rounded-md p-6 max-w-[350px] mx-auto">
               <div className="flex-1">
                 <div className="ml-3 grid">
                   <div className="flex items-center gap-3">

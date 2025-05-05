@@ -1,8 +1,6 @@
 import { Pagination } from "@/components/pagination";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Eye, Mail, MapPinned, MessageSquare, PhoneCall } from "lucide-react"
-import { useSearchParams } from "react-router-dom";
+import { Eye, Mail, MapPinned, PhoneCall } from "lucide-react"
+import { Link, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 
 export const ViewStudentNoTeam = () => {
@@ -85,7 +83,7 @@ export const ViewStudentNoTeam = () => {
         <strong className="text-lg font-semibold text-gray-150 mb-2">Projetos</strong>
         <div className="max-h-[240px] overflow-y-auto grid lg:grid-cols-2 gap-6 pr-4 mb-4">
           {teams.map(team => (
-            <div key={team.id} className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-800 pb-6">
+            <div key={team.id} className="flex flex-col md:flex-row gap-4 items-center justify-between border rounded-md py-6 px-4 border-gray-800 pb-6">
               <div className="flex-1 flex items-start">
                 <img 
                   src={team.logo} 
@@ -96,15 +94,13 @@ export const ViewStudentNoTeam = () => {
                   <p className="font-medium text-xs text-gray-150">Sistema de Gerenciamento Inteligente
                   Organize, controle e otimize seus processos com facilidade. Nosso sistema centraliza informações, 
                   automatiza tarefas e oferece uma visão clara para decisões mais rápidas e eficientes.</p>
+                  <Link
+                    to="/app/student/view/2"
+                    className="text-xs mt-1 text-primary font-normal underline hover:text-primary-dark"
+                  >
+                    Visualizar Projeto
+                  </Link>
                 </div>
-              </div>
-              <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
-
-              <div className="w-fit grid grid-cols-2 md:grid-cols-1 jus md:justify-items-end gap-2">
-                <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
-                  <Eye className="h-4 w-4 mr-1" />
-                  Visualizar
-                </Button>
               </div>
             </div>
           ))}

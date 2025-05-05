@@ -70,58 +70,58 @@ export const TeamSearchProject = () => {
   }, []);
 
   return (
-    <div className="w-full bg-white p-6 border rounded-md border-gray-800">
-      <h2 className="text-sm font-normal text-gray-160 mb-4">Pesquisar empresas</h2>
+    <div className="w-full bg-white p-4 border rounded-md border-gray-800 max-h-[500px] overflow-hidden">
+      <h2 className="text-sm font-normal text-gray-160 mb-3">Pesquisar empresas</h2>
       
-      <div className="flex items-center mb-4 gap-4">
+      <div className="flex items-center mb-3 gap-3">
         <Input
           type="text"
           placeholder="Nome da empresa"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="pr-10 rounded-md border border-gray-800"
+          className="pr-8 rounded-md border border-gray-800"
         />
         <Button 
           variant="ghost" 
           size="icon"
           onClick={handleSearch}
-          className="rounded-md border border-gray-800 p-4"
+          className="rounded-md border border-gray-800 p-3"
         >
           <Search className="h-4 w-4 text-gray-500" />
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center p-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex justify-center items-center p-8">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : isError ? (
-        <div className="text-red-500 p-4 bg-red-50 rounded-md">
+        <div className="text-red-500 p-3 bg-red-50 rounded-md">
           Erro ao carregar empresas: {error?.message || 'Tente novamente mais tarde.'}
         </div>
       ) : teams.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-6 text-gray-500">
           Nenhuma empresa encontrada. Tente outra pesquisa.
         </div>
       ) : (
         <>
-          <div className="space-y-4 mt-12 max-h-[350px] overflow-y-auto pr-4 mb-4">
+          <div className="space-y-4 mt-8 max-h-[300px] overflow-y-auto pr-3 mb-4">
             {teams.map(team => (
               <div key={team.id} className="flex flex-col items-center justify-between border border-gray-800 rounded-md p-4">
                 <div className="flex items-start w-full">
                   <img 
                     src={getFullImageUrl(team.foto) || photo} 
                     alt={`Foto da empresa ${team.nome}`}
-                    className="w-20 h-20 rounded-full object-cover border-2 bg-primary border-gray-800 mr-2"
+                    className="w-12 h-12 rounded-full object-cover border-2 bg-primary border-gray-800 mr-2"
                   />
-                  <div className="ml-1 grid">
-                    <p className="font-medium text-base text-gray-150">{team.nome}</p>
-                    <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
+                  <div className="ml-2 grid">
+                    <p className="font-medium text-sm text-gray-150">{team.nome}</p>
+                    <p className="font-medium text-xs text-gray-150 flex items-center gap-1">
                       <Mail className="w-3 h-3" /> {team.email || 'Sem email'}
                     </p>
                     {team.instituicao?.nome && (
-                      <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
+                      <p className="font-medium text-xs text-gray-150 flex items-center gap-1">
                         <University className="w-3 h-3" /> {team.instituicao.nome}
                       </p>
                     )}
@@ -133,20 +133,20 @@ export const TeamSearchProject = () => {
                     </Link>
                   </div>
                 </div>
-                <Separator orientation="horizontal" className="my-4 w-full" />
+                <Separator orientation="horizontal" className="my-3 w-full" />
                 <div className="grid w-full">
-                  <p className="font-medium text-lg text-gray-150">Criação de Sistema de Boletim</p>
-                  <p className="font-medium text-xs text-gray-150 mb-2">23/02/2025 - 12/10/2025</p>
-                  <p className="font-medium text-xs text-gray-150 mb-5 border border-gray-800 rounded-md py-1 px-2 w-fit">R$ 10.000 - 15.0000</p>
+                  <p className="font-medium text-sm text-gray-150">Criação de Sistema de Boletim</p>
+                  <p className="font-medium text-xs text-gray-150 mb-1">23/02/2025 - 12/10/2025</p>
+                  <p className="font-medium text-xs text-gray-150 mb-3 border border-gray-800 rounded-md py-1 px-2 w-fit">R$ 10.000 - 15.0000</p>
                 </div>
-                <div className='p-2 w-full border-l-4 mb-2 flex items-center gap-2 bg-yellow-50 text-yellow-800 border-l-yellow-400'>
+                <div className='p-2 w-full border-l-4 mb-1 flex items-center gap-2 bg-yellow-50 text-yellow-800 border-l-yellow-400'>
                   <TriangleAlert className="w-4 h-4 text-yellow-400" />
                   <span className="text-xs font-semibold text-yellow-800">Aguardando</span>
                 </div>
               </div>
             ))}
           </div>
-          <div className="grid gap-4 pr-8 mt-auto">
+          <div className="grid gap-3 pr-6 mt-auto">
             <Pagination
               pageIndex={pageIndex}
               totalCount={totalCount}

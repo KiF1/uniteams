@@ -17,13 +17,13 @@ export const HomeStudentNoTeam = () => {
         </div>
         <TeamCardProposalNoTeam />
         <TeamCarousel />
-        <div className="grid xl:grid-cols-[0.65fr_1fr] gap-6">
+        <div className="grid xl:grid-cols-[0.65fr_1fr] lg:grid-cols-1 gap-6">
           <div className="w-full grid gap-4">
             <AppTitle size="full" title="Equipes" text="Confira os times cadastrados no sistema!" />
             <TeamSearch title="Pesquisar equipes" placeholder="Nome da equipe" />
           </div>
           <div className="w-full h-fit grid gap-4">
-            <div className="flex items-center justify-between gap-6">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
               <AppTitle
                 size="full"
                 title="Indicadores de Desempenho"

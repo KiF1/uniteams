@@ -10,7 +10,7 @@ export const HomeStudent = () => {
       <AppTitle title="Projetos" text="Acompanhe os projetos postados recentemente pelas empresas" />
       <TeamCardProposal />
       <TeamCarousel />
-      <div className="grid xl:grid-cols-3 gap-6">
+      <div className="grid xl:grid-cols-3 gap-14">
         <div className="w-full grid gap-4">
           <AppTitle size="full" title="Empresas" text="Veja os melhores times para o seu projeto!" />
           <TeamSearch title="Pesquisar empresas" placeholder="Nome da empresa" />
