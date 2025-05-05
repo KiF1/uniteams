@@ -16,7 +16,7 @@ import { ViewStudent } from './views/app/student/view/page'
 import { HomeStudentNoTeam } from './views/app/student/no-team/home/page'
 import { ViewStudentNoTeam } from './views/app/student/no-team/view/page'
 import { TeamForm } from './views/app/student/no-team/team-form/page'
-
+import { HomeCompany } from './views/app/company/home/page'
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -40,7 +40,9 @@ export const router = createBrowserRouter([
           {
             path: 'company',
             children: [
-              { path: '', element: <HomeUniversity /> }
+              { path: 'dashboard', element: <HomeCompany /> },
+              { path: 'edit/:universityId', element: <EditUniversity /> },
+              { path: 'view/:universityId', element: <ViewUniversity /> },
             ],
           },
           {
