@@ -12,18 +12,17 @@ export const HomeStudent = () => {
       <TeamCarousel />
       <div className="grid xl:grid-cols-3 gap-6">
         <div className="w-full grid gap-4">
-          <AppTitle size="full" title="Empresas" text="Veja os melhores times para o seu projeto" />
+          <AppTitle size="full" title="Empresas" text="Veja os melhores times para o seu projeto!" />
           <TeamSearch title="Pesquisar empresas" placeholder="Nome da empresa" />
         </div>
         <div className="w-full grid gap-4">
-          <AppTitle size="full" title="Integrantes" text="Acompanhe os integrantes do seu time e visualize as solicitações" />
+          <AppTitle size="full" title="Integrantes" text="Monitore membros e solicitações do seu time!" />
           <TeamSearch title="Pesquisar integrantes" placeholder="Nome do integrante" />
         </div>
         <div className="w-full grid gap-4">
-          <AppTitle size="full" title="Projetos" text="Veja os melhores projetos para o seu time" />
+          <AppTitle size="full" title="Projetos" text="Veja os melhores projetos para o seu time!" />
           <TeamSearchProject />
         </div>
-        
       </div>
     </section>
   )

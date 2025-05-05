@@ -6,7 +6,7 @@ import { Search, Eye, MessageSquare, Loader2, Mail, University } from "lucide-re
 import { Separator } from '@/components/ui/separator';
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getFullImageUrl } from '@/utils/photo-user';
 import photo from '@/assets/photo.png'
 import { useFetchTeam } from '../hooks/use-fetch-tem';
@@ -21,6 +21,12 @@ export const TeamSearch = () => {
 
   const teams = data?.teams || [];
   const totalCount = data?.totalCount || 0;
+
+  const navigate = useNavigate();
+
+  const redirectToView = () => {
+    navigate('/app/student/view/2');
+  }
 
   // Atualizar a pesquisa ao clicar no botão ou pressionar Enter
   const handleSearch = () => {
@@ -130,7 +136,7 @@ export const TeamSearch = () => {
                 <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
 
                 <div className="w-fit grid grid-cols-2 md:grid-cols-1 md:justify-items-end gap-2">
-                  <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
+                  <Button onClick={redirectToView} className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
                     <Eye className="h-4 w-4 mr-1" />
                     Visualizar
                   </Button>

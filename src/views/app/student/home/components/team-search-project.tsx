@@ -6,7 +6,7 @@ import { Search, Eye, MessageSquare, Loader2, Mail, University, TriangleAlert } 
 import { Separator } from '@/components/ui/separator';
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getFullImageUrl } from '@/utils/photo-user';
 import photo from '@/assets/photo.png'
 import { useFetchTeam } from '../hooks/use-fetch-tem';
@@ -113,9 +113,9 @@ export const TeamSearchProject = () => {
                   <img 
                     src={getFullImageUrl(team.foto) || photo} 
                     alt={`Foto da empresa ${team.nome}`}
-                    className="w-16 h-16 rounded-full object-cover border-2 bg-primary border-gray-800 mr-4"
+                    className="w-20 h-20 rounded-full object-cover border-2 bg-primary border-gray-800 mr-2"
                   />
-                  <div className="ml-3 grid">
+                  <div className="ml-1 grid">
                     <p className="font-medium text-base text-gray-150">{team.nome}</p>
                     <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
                       <Mail className="w-3 h-3" /> {team.email || 'Sem email'}
@@ -125,28 +125,24 @@ export const TeamSearchProject = () => {
                         <University className="w-3 h-3" /> {team.instituicao.nome}
                       </p>
                     )}
-                  </div>
-                  <div className="ml-auto flex flex-col gap-2">
-                    <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
-                      <Eye className="h-4 w-4 mr-1" />
-                      Visualizar
-                    </Button>
-                    <Button className="text-gray-160 w-fit text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      Contato
-                    </Button>
+                    <Link
+                      to="/app/student/view/2"
+                      className="text-xs mt-1 text-primary font-normal underline hover:text-primary-dark"
+                    >
+                      Visualizar Empresa
+                    </Link>
                   </div>
                 </div>
                 <Separator orientation="horizontal" className="my-4 w-full" />
-                <div className="ml-3 grid w-full">
+                <div className="grid w-full">
                   <p className="font-medium text-lg text-gray-150">Criação de Sistema de Boletim</p>
                   <p className="font-medium text-xs text-gray-150 mb-2">23/02/2025 - 12/10/2025</p>
-                  <p className="font-medium text-xs text-gray-150 mb-5 border border-gray-800 rounded-md p-1 w-fit">R$ 10.000 - 15.0000</p>
+                  <p className="font-medium text-xs text-gray-150 mb-5 border border-gray-800 rounded-md py-1 px-2 w-fit">R$ 10.000 - 15.0000</p>
                 </div>
-                <div className='p-2 w-full border-l-4 flex items-center gap-2 bg-yellow-50 text-yellow-800 border-l-yellow-400'>
-              <TriangleAlert className="w-4 h-4 text-yellow-400" />
-              <span className="text-xs font-semibold text-yellow-800">Aguardando</span>
-            </div>
+                <div className='p-2 w-full border-l-4 mb-2 flex items-center gap-2 bg-yellow-50 text-yellow-800 border-l-yellow-400'>
+                  <TriangleAlert className="w-4 h-4 text-yellow-400" />
+                  <span className="text-xs font-semibold text-yellow-800">Aguardando</span>
+                </div>
               </div>
             ))}
           </div>

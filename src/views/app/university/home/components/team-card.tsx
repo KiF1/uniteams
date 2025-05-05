@@ -8,6 +8,7 @@ import { formatTime } from "@/utils/format-date";
 import { applyPhoneMask } from "@/utils/mask-phone";
 import { CreateRecommendationSheet } from "./recomendation";
 import { useUpdateRecommendation } from "../hooks/use-update-recomendation";
+import { Link } from "react-router-dom";
 
 interface Team {
   id: string;
@@ -46,7 +47,12 @@ export const TeamCard = ({ team }: Props) => {
             <div className="grid">
               <strong className="font-medium text-base text-gray-150">{team.nome}</strong>
               <span className="font-normal text-sm text-gray-160">{formatTime(team.created_at)}</span>
-              <span className="text-xs text-primary font-normal underline">Vizualizar Equipe</span>
+              <Link
+                to="/app/student/view/2"
+                className="text-xs text-primary font-normal underline hover:text-primary-dark"
+              >
+                Visualizar Equipe
+              </Link>
             </div>
           </div>
         </CardHeader>

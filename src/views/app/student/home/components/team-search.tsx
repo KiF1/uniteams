@@ -6,7 +6,7 @@ import { Search, Eye, MessageSquare, Loader2, Mail, University } from "lucide-re
 import { Separator } from '@/components/ui/separator';
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getFullImageUrl } from '@/utils/photo-user';
 import photo from '@/assets/photo.png'
 import { useFetchTeam } from '../hooks/use-fetch-tem';
@@ -113,8 +113,8 @@ export const TeamSearch = ({ title, placeholder }: TeamSearchProps) => {
         <>
           <div className="space-y-4 mt-12 max-h-[350px] overflow-y-auto pr-4 mb-4">
             {teams.map(team => (
-              <div key={team.id} className="flex flex-col md:flex-row items-center justify-between border-b border-gray-800 pb-6">
-                <div className="flex-1 flex items-start">
+              <div key={team.id} className="flex flex-col items-center justify-between border-b border-gray-800 pb-6">
+                <div className="w-full flex items-start">
                   <img 
                     src={getFullImageUrl(team.foto) || photo} 
                     alt={`Foto da empresa ${team.nome}`}
@@ -130,19 +130,13 @@ export const TeamSearch = ({ title, placeholder }: TeamSearchProps) => {
                         <University className="w-3 h-3" /> {team.instituicao.nome}
                       </p>
                     )}
+                    <Link
+                      to="/app/student/view/2"
+                      className="text-xs mt-1 text-primary font-normal underline hover:text-primary-dark"
+                    >
+                      Visualizar Equipe
+                    </Link>
                   </div>
-                </div>
-                <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
-
-                <div className="w-fit grid grid-cols-2 md:grid-cols-1 md:justify-items-end gap-2">
-                  <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
-                    <Eye className="h-4 w-4 mr-1" />
-                    Visualizar
-                  </Button>
-                  <Button className="text-gray-160 w-fit text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
-                    <MessageSquare className="h-4 w-4 mr-1" />
-                    Contato
-                  </Button>
                 </div>
               </div>
             ))}

@@ -22,7 +22,7 @@ export const TeamCardProposal = () => {
   }, []);
 
   return (
-    <div className="w-full bg-white p-1 rounded-md">
+    <div className="w-full bg-white rounded-md">
       {isLoading ? (
         <div className="flex justify-center items-center p-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -40,14 +40,12 @@ export const TeamCardProposal = () => {
           {teams.slice(0, 3).map(team => (
             <div key={team.id} className="flex flex-col items-center justify-between border border-gray-800 rounded-md p-6">
               <div className="flex items-start w-full">
-                <div className="ml-3 grid">
+                <div className="ml-1 grid">
                   <p className="font-medium text-lg text-gray-150">Tópicos Integradores</p>
                   <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
                     Publicado: há 9h | Prazo de Entrega: 12/04/2025
                   </p>
-                </div>
-                <div className="ml-auto flex flex-col gap-2">
-                  <p className="font-medium text-xs text-gray-150 border border-gray-800 rounded-md p-1">R$ 10.000 - 15.000</p>
+                  <p className="font-medium w-fit text-xs text-gray-150 border border-gray-800 rounded-md py-1 px-2 mt-2">R$ 10.000 - 15.000</p>
                 </div>
               </div>
               <div className="ml-3 grid w-full">

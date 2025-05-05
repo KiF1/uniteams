@@ -2,7 +2,7 @@ import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CheckCheck, CircleCheck, CircleX, Hourglass, TriangleAlert } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { useFetchRecommendations } from "../hooks/fetch-recomendations";
 import { getFullImageUrl } from "@/utils/photo-user";
@@ -89,7 +89,12 @@ export const Metrics = () => {
               <div className="ml-3 grid">
                 <p className="font-medium text-lg text-gray-150">{team.nome}</p>
                 <p className="font-medium text-xs text-gray-150">{team.email}</p>
-                <span className="text-xs text-primary font-normal underline cursor-pointer">Vizualizar Equipe</span>
+                <Link
+                  to="/app/student/view/2"
+                  className="text-xs text-primary font-normal underline hover:text-primary-dark"
+                >
+                  Visualizar Equipe
+                </Link>
               </div>
             </div>
             <Separator orientation="horizontal" className="my-4" />
