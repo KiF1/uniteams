@@ -5,6 +5,8 @@ import { Metrics } from "./components/metrics"
 import { DropdownFilter } from "./components/dropdown-filter"
 import { useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { CreateProjectSheet } from "./components/project";
 
 export const HomeCompany = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,33 +21,32 @@ export const HomeCompany = () => {
       prev.set('page', '1');
       return prev;
     });
-  }
+  };
 
   return (
-<section className="w-full grid gap-4">
-  <div className="w-full flex justify-between items-start">
-    <AppTitle title="Projetos" text="Acompanhe os projetos ativos da sua empresa!" />
-    <Button className="text-sm cursor-pointer hover:underline">Criar projetos</Button>
-  </div>
-  <ProjectCarousel />
-  <div className="grid xl:grid-cols-[0.65fr_1fr] gap-6">
-    <div className="w-full grid gap-4">
-      <AppTitle size="full" title="Equipes" text="Confira os times cadastrados no sistema!" />
-      <TeamSearch />
-    </div>
-    <div className="w-full h-fit grid gap-4">
-      <div className="flex items-center justify-between gap-6">
-        <AppTitle
-          size="full"
-          title="Indicadores de Desempenho"
-          text="Monitore em tempo real as recomendações solicitadas e concluídas"
-        />
-        <DropdownFilter onStatusChange={handleStatusFilter} />
+    <section className="w-full grid gap-4">
+      <div className="w-full flex justify-between items-start">
+        <AppTitle title="Projetos" text="Acompanhe os projetos ativos da sua empresa!" />
+        <CreateProjectSheet onSuccess={() => console.log("Projeto criado com sucesso!")} />
       </div>
-      <Metrics />
-    </div>
-  </div>
-</section>
-
-  )
-}
+      <ProjectCarousel />
+      <div className="grid xl:grid-cols-[0.65fr_1fr] gap-6">
+        <div className="w-full grid gap-4">
+          <AppTitle size="full" title="Equipes" text="Confira os times cadastrados no sistema!" />
+          <TeamSearch />
+        </div>
+        <div className="w-full h-fit grid gap-4">
+          <div className="flex items-center justify-between gap-6">
+            <AppTitle
+              size="full"
+              title="Indicadores de Desempenho"
+              text="Monitore em tempo real as recomendações solicitadas e concluídas"
+            />
+            <DropdownFilter onStatusChange={handleStatusFilter} />
+          </div>
+          <Metrics />
+        </div>
+      </div>
+    </section>
+  );
+};

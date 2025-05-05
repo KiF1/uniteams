@@ -25,9 +25,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateProject } from "../hooks/use-create-projects";
 
 const formSchema = z.object({
-  equipe_id: z.string(),
   titulo: z.string().min(3, "Título deve ter pelo menos 3 caracteres"),
   descricao: z.string().min(10, "Descrição deve ter pelo menos 10 caracteres"),
+  prazo: z.string().nonempty("Prazo é obrigatório"),
+  valor: z.number().positive("Valor deve ser maior que zero"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -38,29 +39,39 @@ interface CreateProjectSheetProps {
 }
 
 export const CreateProjectSheet = ({
-  equipeId,
   onSuccess,
-}: CreateProjectSheetProps) => {
+}: Omit<CreateProjectSheetProps, "equipeId">) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      equipe_id: equipeId,
       titulo: "",
       descricao: "",
+      prazo: "",
+      valor: 0,
     },
   });
 
   const { mutate, isPending } = useCreateProject();
 
   const handleSubmit = async (data: FormData) => {
-    mutate(data, {
-      onSuccess: () => {
-        setIsOpen(false);
-        onSuccess?.();
+    mutate(
+      {
+        nome: data.titulo,
+        descricao: data.descricao,
+        prazo: data.prazo,
+        valor: data.valor,
+        empresa_id: sessionStorage.getItem("userId") || "",
+        status: "aberto", // Valor padrão para status
       },
-    });
+      {
+        onSuccess: () => {
+          setIsOpen(false);
+          onSuccess?.();
+        },
+      }
+    );
   };
 
   return (
@@ -113,6 +124,39 @@ export const CreateProjectSheet = ({
                       className="resize-none"
                       rows={4}
                       {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="prazo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Prazo</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="valor"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Ex: 10000"
+                      value={field.value || ""}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   </FormControl>
                   <FormMessage />
