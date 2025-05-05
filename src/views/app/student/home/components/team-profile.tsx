@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button } from "@/components/ui/button";
-import { Eye, Loader2, Mail } from "lucide-react";
-import { Separator } from '@/components/ui/separator';
+import { Loader2 } from "lucide-react";
 import { getFullImageUrl } from '@/utils/photo-user';
 import photo from '@/assets/photo.png';
 import { useFetchTeam } from '../hooks/use-fetch-tem';

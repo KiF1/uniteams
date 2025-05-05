@@ -10,8 +10,8 @@ import photo from '@/assets/photo.png';
 import { getFullImageUrl } from '@/utils/photo-user';
 
 export const TeamCardProposalNoTeam = () => {
-  const [searchInput, setSearchInput] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchInput] = useState('');
+  const [searchParams, ] = useSearchParams();
   
   // Usar o hook de busca de empresas
   const { data, isLoading, isError, error } = useFetchTeam();

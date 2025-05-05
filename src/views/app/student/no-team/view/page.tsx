@@ -1,7 +1,7 @@
 import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Eye, Mail, MapPinned, MessageSquare, PhoneCall } from "lucide-react"
+import { Eye, Mail, MapPinned, PhoneCall } from "lucide-react"
 import { useSearchParams } from "react-router-dom";
 import { z } from "zod";
 

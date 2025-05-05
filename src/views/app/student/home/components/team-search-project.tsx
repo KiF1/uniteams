@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Eye, MessageSquare, Loader2, Mail, University, TriangleAlert } from "lucide-react";
+import { Search,  Loader2, Mail, University, TriangleAlert } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
