@@ -146,11 +146,11 @@ export const TeamForm = () => {
             <FormField
               control={methods.control}
               name="nome"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="grid">
                   <Label className="text-xs text-gray-150 font-normal">Nome da Equipe</Label>
                   <FormControl>
-                    <Input {...field} placeholder="Insira o nome da equipe" className="h-10 text-xs" />
+                    <Input placeholder="Insira o nome da equipe" className="h-10 text-xs" />
                   </FormControl>
                   <FormMessage className="text-xs text-red-500" />
                 </FormItem>
@@ -160,12 +160,12 @@ export const TeamForm = () => {
             <FormField
               control={methods.control}
               name="universidade"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="grid">
                   <Label className="text-xs text-gray-150 font-normal">Universidade</Label>
                   <FormControl>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger className="h-10 text-xs">{field.value || "Selecione a universidade"}</SelectTrigger>
+                    <Select defaultValue="">
+                      <SelectTrigger className="h-10 text-xs">Selecione a universidade</SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Universidade Federal">Universidade Federal</SelectItem>
                         <SelectItem value="Universidade Estadual">Universidade Estadual</SelectItem>
@@ -180,11 +180,11 @@ export const TeamForm = () => {
             <FormField
               control={methods.control}
               name="email"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="grid">
                   <Label className="text-xs text-gray-150 font-normal">E-mail</Label>
                   <FormControl>
-                    <Input {...field} placeholder="Insira o e-mail da equipe" className="h-10 text-xs" />
+                    <Input placeholder="Insira o e-mail da equipe" className="h-10 text-xs" />
                   </FormControl>
                   <FormMessage className="text-xs text-red-500" />
                 </FormItem>
@@ -194,7 +194,7 @@ export const TeamForm = () => {
             <FormField
               control={methods.control}
               name="telefone"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="grid">
                   <Label className="text-xs text-gray-150 font-normal">Telefone</Label>
                   <FormControl>

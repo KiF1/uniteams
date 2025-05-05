@@ -41,7 +41,7 @@ export const SendStudent = () => {
   useEffect(() => {
     const subscription = methods.watch((value, { name }) => {
       if (name === "valor") {
-        methods.setValue("valor", formatCurrency(value.valor), {
+        methods.setValue("valor", formatCurrency(value.valor || ""), {
           shouldValidate: true,
         });
       }

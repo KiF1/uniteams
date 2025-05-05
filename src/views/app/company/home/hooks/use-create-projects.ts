@@ -7,14 +7,27 @@ interface CreateProjectPayload {
   prazo: string;
   valor: number;
   empresa_id: string;
-  equipe_id: string;
   status?: string;
   descricao?: string;
 }
 
+const allowedStatus = [
+  "aberto",
+  "em_andamento",
+  "finalizado",
+  "cancelado",
+  "aguardando_inicio",
+];
+
 export const useCreateProject = () => {
   const mutation = useMutation({
     mutationFn: async (payload: CreateProjectPayload) => {
+      const status = payload.status || "aberto";
+
+      if (!allowedStatus.includes(status)) {
+        throw new Error("Status inválido");
+      }
+
       const { data, error } = await supabase.from("projetos").insert([
         {
           nome: payload.nome,
@@ -22,8 +35,7 @@ export const useCreateProject = () => {
           prazo: payload.prazo,
           valor: payload.valor,
           empresa_id: payload.empresa_id,
-          equipe_id: payload.equipe_id,
-          status: payload.status || "pendente",
+          status,
           descricao: payload.descricao || null,
         },
       ]);

@@ -6,8 +6,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useFetchTeam } from '../hooks/use-fetch-tem';
 
 export const TeamCardProposal = () => {
-  const [searchInput, setSearchInput] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchInput] = useState('');
+  const [searchParams, ] = useSearchParams();
   
   // Usar o hook de busca de empresas
   const { data, isLoading, isError, error } = useFetchTeam();

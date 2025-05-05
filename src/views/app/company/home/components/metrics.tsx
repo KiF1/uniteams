@@ -115,7 +115,7 @@ export const Metrics = () => {
 
             {team.status === 'pendente' && (
               <div className="w-fit flex items-center mt-4 gap-2">
-                <CreateProjectSheet equipeId={team.id} />
+                <CreateProjectSheet  />
                 <Button onClick={() => rejectRecomendation(team.id)} disabled={isPending} className="text-gray-160 flex-1 text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
                   <CircleX className="h-4 w-4 mr-1" />
                   Rejeitar

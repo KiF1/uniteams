@@ -128,7 +128,7 @@ export const useRegisterCompany = () => {
         }
 
         // 4. Criar registro na tabela empresas
-        const { data: empresa, error: errorEmpresa } = await supabase
+        const { error: errorEmpresa } = await supabase
           .from("empresas")
           .insert({
             id: userId,
@@ -147,7 +147,7 @@ export const useRegisterCompany = () => {
             foto: photoUrl,
           })
 
-        if (errorEmpresa || !empresa) {
+        if (errorEmpresa) {
           throw new Error(errorEmpresa?.message || "Erro ao criar a empresa.");
         }
 
@@ -157,6 +157,7 @@ export const useRegisterCompany = () => {
 
         return { userId };
       } catch (error) {
+        console.log(error)
         // Rollback: remove a foto se enviada
         if (uploadedFilePath) {
           await supabase.storage.from("fotos").remove([uploadedFilePath]);
