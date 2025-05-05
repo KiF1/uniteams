@@ -5,7 +5,7 @@ import { getFullImageUrl } from "@/utils/photo-user";
 import { CircleX } from "lucide-react";
 import photo from '@/assets/photo.png'
 import { formatTime } from "@/utils/format-date";
-import { CreateRecommendationSheet } from "./project";
+import { CreateProjectSheet } from "./project";
 import { useUpdateRecommendation } from "../hooks/use-update-recomendation";
 import type { Team } from "../hooks/use-fetch-team";
 
@@ -60,7 +60,7 @@ export const TeamCard = ({ projeto }: Props) => {
           <p className="mt-2 text-sm font-medium">Valor: R$ {projeto.valor.toFixed(2)}</p>
 
           <div className="flex justify-between w-full mt-4">
-            <CreateRecommendationSheet equipeId={equipe.id} />
+            <CreateProjectSheet />
             <Button
               variant="outline"
               onClick={() => rejectRecomendation(equipe.id)}

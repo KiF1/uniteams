@@ -4,12 +4,10 @@ import { TeamSearch } from "./components/team-search"
 import { Metrics } from "./components/metrics"
 import { DropdownFilter } from "./components/dropdown-filter"
 import { useSearchParams } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { useState } from "react";
 import { CreateProjectSheet } from "./components/project";
 
 export const HomeCompany = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const handleStatusFilter = (newStatus: string) => {
     setSearchParams((prev) => {

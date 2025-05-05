@@ -7,14 +7,30 @@ import {
 } from "@/components/ui/carousel";
 import { useFetchProjects } from "../hooks/fetch-projects";
 
+// Adicionar tipagem para os projetos
+interface Projeto {
+  id: string;
+  nome: string;
+  createdAt: string;
+  prazo: string;
+  valor: number;
+  descricao: string;
+  categoria: string;
+  tecnologias?: string[];
+}
+
+// Remover o tipo genérico do hook e ajustar o tipo de retorno
 export const ProjectCarousel = () => {
-  const { data: projetos, isLoading } = useFetchProjects();
+  const { data: projetos, isLoading } = useFetchProjects(); // Remover o tipo genérico
+
+  // Garantir que projetos seja tratado como um array ou undefined
+  const projetosArray = Array.isArray(projetos) ? projetos : [];
 
   if (isLoading) {
     return <span className="text-sm text-gray-150">Carregando projetos...</span>;
   }
 
-  if (!projetos || projetos.length === 0) {
+  if (projetosArray.length === 0) { // Usar projetosArray para verificar o comprimento
     return (
       <span className="text-sm font-semibold text-gray-150">
         Nenhum projeto no momento!
@@ -33,7 +49,7 @@ export const ProjectCarousel = () => {
         className="w-full"
       >
         <CarouselContent className="-ml-2 md:-ml-4">
-          {projetos.map((projeto) => (
+          {projetosArray.map((projeto: Projeto) => ( // Usar projetosArray no map
             <CarouselItem key={projeto.id} className="pl-2 md:pl-4 w-full xl:w-1/4">
               <div className="h-full border rounded-2xl shadow-sm bg-white p-6 flex flex-col justify-between">
                 {/* Topo: Título e Preço */}
@@ -80,8 +96,6 @@ export const ProjectCarousel = () => {
                 </div>
               </div>
             </CarouselItem>
-
-
           ))}
         </CarouselContent>
         <div className="flex justify-end gap-2 mt-4">
