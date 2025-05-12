@@ -2,11 +2,10 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Eye, MessageSquare, Loader2, Mail, University } from "lucide-react";
-import { Separator } from '@/components/ui/separator';
+import { Search, Loader2, Mail, University } from "lucide-react";
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getFullImageUrl } from '@/utils/photo-user';
 import photo from '@/assets/photo.png'
 import { useFetchTeam } from '../hooks/use-fetch-tem';
@@ -21,12 +20,6 @@ export const TeamSearch = () => {
 
   const teams = data?.teams || [];
   const totalCount = data?.totalCount || 0;
-
-  const navigate = useNavigate();
-
-  const redirectToView = () => {
-    navigate('/app/student/view/2');
-  }
 
   // Atualizar a pesquisa ao clicar no botão ou pressionar Enter
   const handleSearch = () => {
@@ -131,19 +124,13 @@ export const TeamSearch = () => {
                         <University className="w-3 h-3" /> {team.instituicao.nome}
                       </p>
                     )}
+                    <Link
+                      to={`/app/student/view/${team.id}`}
+                      className="text-xs text-primary font-normal underline hover:text-primary-dark"
+                    >
+                      Visualizar Equipe
+                    </Link>
                   </div>
-                </div>
-                <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
-
-                <div className="w-fit grid grid-cols-2 md:grid-cols-1 md:justify-items-end gap-2">
-                  <Button onClick={redirectToView} className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
-                    <Eye className="h-4 w-4 mr-1" />
-                    Visualizar
-                  </Button>
-                  <Button className="text-gray-160 w-fit text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
-                    <MessageSquare className="h-4 w-4 mr-1" />
-                    Contato
-                  </Button>
                 </div>
               </div>
             ))}

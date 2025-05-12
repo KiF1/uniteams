@@ -1,8 +1,6 @@
 import { Pagination } from "@/components/pagination";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { ArrowRight, Clock, Eye, Mail, MapPinned, MessageSquare, PhoneCall } from "lucide-react"
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { ArrowRight, Clock, Mail, MapPinned, PhoneCall } from "lucide-react"
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { useRecommendedTeams, useViewUniversity } from "./hooks/user-view-university";
 import { applyPhoneMask } from "@/utils/mask-phone";
@@ -33,7 +31,7 @@ export const ViewUniversity = () => {
   }
 
   return(
-    <section className="w-full grid grid-cols-1 lg:grid-cols-[0.65fr_1fr] xl:grid-cols-[0.25fr_1fr] gap-6 md:gap-12">
+    <section className="w-full grid grid-cols-1 md:grid-cols-[0.45fr_1fr] gap-6 md:gap-12">
       <div className="w-full rounded-lg border flex flex-col border-gray-800 shadow-xl h-fit">
         <div className="w-full h-32 bg-primary rounded-t-lg" />
         <div className="relative mx-auto -mt-16">
@@ -74,7 +72,7 @@ export const ViewUniversity = () => {
             <strong className="text-lg font-semibold text-gray-150 mb-2">Equipes Recomendadas</strong>
             <div className="max-h-[240px] overflow-y-auto grid lg:grid-cols-2 gap-6 pr-4 mb-4">
               {teamsData.data.map(team => (
-                <div key={team.id} className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-800 pb-6">
+                <div key={team.id} className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-800 pb-4">
                   <div className="flex-1 flex items-start">
                     <img 
                       src={getFullImageUrl(team.foto) || photo} 
@@ -94,19 +92,13 @@ export const ViewUniversity = () => {
                         <PhoneCall className="w-3 h-3" />
                         <strong className="text-gray-160 font-normal text-xs">{team?.telefone && applyPhoneMask(team?.telefone)}</strong>
                       </div>
+                      <Link
+                        to="/app/student/view/2"
+                        className="text-xs text-primary font-normal underline hover:text-primary-dark mt-1"
+                      >
+                        Visualizar Equipe
+                      </Link>
                     </div>
-                  </div>
-                  <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
-
-                  <div className="w-fit grid grid-cols-2 md:grid-cols-1 jus md:justify-items-end gap-2">
-                    <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
-                      <Eye className="h-4 w-4 mr-1" />
-                      Visualizar
-                    </Button>
-                    <Button className="text-gray-160 w-fit text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      Contato
-                    </Button>
                   </div>
                 </div>
               ))}

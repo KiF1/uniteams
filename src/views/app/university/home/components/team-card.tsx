@@ -36,7 +36,7 @@ export const TeamCard = ({ team }: Props) => {
   };
 
   return (
-    <Card className="w-full h-full border rounded-md border-gray-800 grid xl:grid-cols-[1fr_0.1fr_0.75fr]">
+    <Card className="w-full h-full border rounded-md border-gray-800 grid xl:grid-cols-[1fr_0.1fr_1fr]">
       <div className="w-full flex flex-col justify-start items-start">
         <CardHeader className="w-full pr-0">
           <div className="w-full flex items-start gap-2">
