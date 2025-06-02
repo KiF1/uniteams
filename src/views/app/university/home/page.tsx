@@ -7,7 +7,7 @@ import { useSearchParams } from "react-router-dom"
 import { JobsCarousel } from "./components/jobs-carousel"
 
 export const HomeUniversity = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const handleStatusFilter = (newStatus: string) => {
     setSearchParams((prev) => {
