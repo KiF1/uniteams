@@ -4,9 +4,6 @@ import { Button } from "@/components/ui/button";
 export const ChooseType = () => {
   const navigate = useNavigate();
 
-  function redirectToCreateStudent(){
-    navigate('/auth/register-student');
-  }
   function redirectToCreateCompany(){
     navigate('/auth/register-company');
   }
@@ -24,7 +21,6 @@ export const ChooseType = () => {
       <h1 className="text-xl text-gray-150 font-bold text-center">Inicie seu cadastro</h1>
       <h2 className="text-sm text-gray-160 font-semibold text-center mt-2">Selecione seu perfil — Empresa, Universidade ou Estudante.</h2>
       <div className="w-full flex flex-col gap-6 mt-6">
-        <Button className="bg-primary text-white" onClick={redirectToCreateStudent}>Estudante</Button>
         <Button className="bg-primary text-white" onClick={redirectToCreateCompany}>Empresa</Button>
         <Button className="bg-primary text-white" onClick={redirectToCreateUniversity}>Universidade</Button>
         <button onClick={redirectToLogin} className="text-sm text-black font-normal text-center bg-transparent border-0">

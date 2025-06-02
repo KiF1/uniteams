@@ -1,9 +1,9 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { TeamCard } from "./team-card";
-import { useFetchRecommendationRequests } from "../hooks/fetch-recommendation-requests";
+import { useFetchOpenJobs } from "../hooks/use-fetch-jobs";
+import { JobCard } from "./job-card";
 
-export const TeamCarousel = () => {
-  const { data:teams } = useFetchRecommendationRequests();
+export const JobsCarousel = () => {
+  const { data:teams } = useFetchOpenJobs();
 
   return (
     <>
@@ -21,9 +21,9 @@ export const TeamCarousel = () => {
               {teams.map((team, index) => (
                 <CarouselItem 
                   key={index} 
-                  className="pl-2 md:pl-4 w-full xl:w-1/2"
+                  className="pl-2 md:pl-4 w-full xl:w-1/3"
                 >
-                  <TeamCard team={team} />
+                  <JobCard job={team} />
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -34,7 +34,7 @@ export const TeamCarousel = () => {
           </Carousel>
         </div>
       ) : (
-        <span className="text-sm font-semibold text-gray-150">Não existe solicitações de recomendações no momento, busque novamente mais tarde!</span>
+        <span className="text-sm font-semibold text-gray-150">Não existe vagas no momento, busque novamente mais tarde!</span>
       )}
     </>
   );

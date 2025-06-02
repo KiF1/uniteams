@@ -19,20 +19,15 @@ export const useFetchTeam = () => {
   const [searchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const searchQuery = searchParams.get("query"); // Alterado para "query" para corresponder ao seu componente
+  const userLogged = sessionStorage.getItem('userId');
   
   return useQuery<{ teams: Team[]; totalCount: number }>({
     queryKey: ["teams", page, searchQuery],
     queryFn: async () => {
       let query = supabase
-        .from("equipes")
-        .select(`
-          id,
-          nome,
-          foto,
-          email,
-          created_at,
-          instituicao:universidade_id (nome)
-        `, { count: "exact" });
+        .from("estudantes")
+        .select(`*`, { count: "exact" })
+        .eq('universidade_id', userLogged);
       
       if (searchQuery) {
         query = query.ilike("nome", `%${searchQuery}%`);
@@ -54,7 +49,6 @@ export const useFetchTeam = () => {
         foto: item.foto,
         email: item.email,
         created_at: item.created_at,
-        instituicao: item.instituicao ? { nome: item.instituicao.nome } : undefined
       }));
       
       return {

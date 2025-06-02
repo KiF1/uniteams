@@ -117,7 +117,6 @@ export const useRegisterCompany = () => {
           .insert({
             id: userId,
             email: dataForm.email,
-            senha: dataForm.senha, // Nota: A senha já está criptografada no Supabase Auth
             tipo_usuario: "empresa"
           })
           .select("id")

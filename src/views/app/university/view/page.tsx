@@ -1,8 +1,8 @@
 import { Pagination } from "@/components/pagination";
-import { ArrowRight, Clock, Mail, MapPinned, PhoneCall } from "lucide-react"
+import { ArrowRight, Building2, Clock, Mail, MapPinned, PhoneCall, User } from "lucide-react"
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { z } from "zod";
-import { useRecommendedTeams, useViewUniversity } from "./hooks/user-view-university";
+import { useApplicationsSuccess, useViewUniversity } from "./hooks/user-view-university";
 import { applyPhoneMask } from "@/utils/mask-phone";
 import { getFullImageUrl } from "@/utils/photo-user";
 import photo from '@/assets/photo.png'
@@ -16,7 +16,7 @@ export const ViewUniversity = () => {
 
   const { universityId } = useParams<{ universityId: string }>();
   const { data: university } = useViewUniversity(universityId || '');
-  const { data: teamsData } = useRecommendedTeams(universityId || '', pageIndex + 1, 10);
+  const { data: jobs } = useApplicationsSuccess(universityId || '', pageIndex + 1, 10);
 
   const handlePaginate = (pageIndex: number) => {
     setSearchParams((prev) => {
@@ -67,36 +67,36 @@ export const ViewUniversity = () => {
           <strong className="text-lg font-semibold text-gray-150">Descrição</strong>
           <p className="mb-0 font-normal text-gray-160 text-sm whitespace-pre-line">{university?.descricao}</p>
         </div>
-        {teamsData && teamsData.total > 0 && (
+        {jobs && jobs.total > 0 && (
           <>
-            <strong className="text-lg font-semibold text-gray-150 mb-2">Equipes Recomendadas</strong>
+            <strong className="text-lg font-semibold text-gray-150 mb-2">Estudantes Selecionados</strong>
             <div className="max-h-[240px] overflow-y-auto grid lg:grid-cols-2 gap-6 pr-4 mb-4">
-              {teamsData.data.map(team => (
-                <div key={team.id} className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-800 pb-4">
+              {jobs.data.map(job => (
+                <div key={job.id} className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-800 pb-4">
                   <div className="flex-1 flex items-start">
                     <img 
-                      src={getFullImageUrl(team.foto) || photo} 
+                      src={getFullImageUrl(job.empresa_foto) || photo} 
                       className="w-16 h-16 rounded-full object-cover border-2 bg-primary border-gray-800"
                     />
                     <div className="ml-3 grid">
-                      <strong className="font-medium text-base text-gray-150">{team.nome}</strong>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-3 h-3" />
-                        <strong className="text-gray-160 font-normal text-xs">{formatTime(team.created_at)}</strong>
+                      <strong className="font-medium text-base text-gray-150">{job.nome}</strong>
+                      <div className="flex items-start gap-2">
+                        <Building2 className="w-4 h-4" />
+                        <strong className="font-medium text-sm text-gray-150">{job.empresa_nome}</strong>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-3 h-3" />
-                        <strong className="text-gray-160 font-normal text-xs">{team.email}</strong>
+                      <div className="flex items-start gap-2">
+                        <User className="w-4 h-4" />
+                        <strong className="font-medium text-sm text-gray-150">{job.estudante_nome}</strong>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <PhoneCall className="w-3 h-3" />
-                        <strong className="text-gray-160 font-normal text-xs">{team?.telefone && applyPhoneMask(team?.telefone)}</strong>
+                      <div className="flex items-start gap-2">
+                        <Clock className="w-4 h-4" />
+                        <strong className="font-medium text-sm text-gray-150">{formatTime(job.created_at)}</strong>
                       </div>
                       <Link
-                        to="/app/student/view/2"
-                        className="text-xs text-primary font-normal underline hover:text-primary-dark mt-1"
+                        to={`app/student/view/${job.vaga_id}`}
+                        className="text-sm text-primary font-normal underline hover:text-primary-dark"
                       >
-                        Visualizar Equipe
+                        Visualizar Vaga
                       </Link>
                     </div>
                   </div>
@@ -106,7 +106,7 @@ export const ViewUniversity = () => {
             <div className="grid gap-4 pr-8 mt-auto">
               <Pagination
                 pageIndex={pageIndex}
-                totalCount={teamsData.total}
+                totalCount={jobs.total}
                 perPage={10}
                 onPageChange={handlePaginate}
               />

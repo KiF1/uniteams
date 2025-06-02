@@ -1,22 +1,25 @@
 import { Pagination } from "@/components/pagination";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { CheckCheck, CircleCheck, CircleX, Hourglass, TriangleAlert } from "lucide-react";
+import { Building2, CheckCheck, CircleCheck, CircleX, Clock, Hourglass, TriangleAlert, User } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { z } from "zod";
-import { useFetchRecommendations } from "../hooks/fetch-recomendations";
 import { getFullImageUrl } from "@/utils/photo-user";
 import photo from '@/assets/photo.png'
-import { CreateRecommendationSheet } from "./recomendation";
-import { useUpdateRecommendation } from "../hooks/use-update-recomendation";
+import { useFetchApplications } from "../hooks/use-fetch-applications";
+import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
 
 export const Metrics = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const status = searchParams.get('status') as 'todas' | 'pendente' | 'aprovada' | 'recusada' || 'todas';
   const pageIndex = z.coerce.number().transform((page) => page - 1).parse(searchParams.get('page-metrics') ?? '1');
+
+  const formatWithDateFns = (dateString: string): string => {
+    return format(new Date(dateString), 'dd/MM/yyyy');
+  };
   
 
-  const { teams, metrics, isLoading, error } = useFetchRecommendations({
+  const { applications, metrics, isLoading, error } = useFetchApplications({
     page: pageIndex + 1,
     perPage: 10,
     status: status
@@ -28,12 +31,6 @@ export const Metrics = () => {
       return prev
     })
   }
-
-  const { mutate, isPending } = useUpdateRecommendation('recusada');
-
-  const rejectRecomendation = async (team: string) => {
-    mutate({ equipe_id: team })
-  };
 
   if (isLoading) {
     return <div>Carregando...</div>;
@@ -78,55 +75,53 @@ export const Metrics = () => {
       </div>
       
       <div className="grid xl:grid-cols-2 gap-6 max-h-[300px] overflow-y-auto pr-4 mb-6">
-        {teams.map(team => (
-          <div key={team.id} className="flex flex-col gap-2 border border-gray-800 rounded-md p-6">
-            <div className="flex items-start">
+        {applications.map(application => (
+          <div key={application.id} className="flex flex-col gap-2 border border-gray-800 rounded-md p-6">
+            <div className="grid gap-2">
               <img 
-                src={getFullImageUrl(team.foto) || photo} 
-                className="w-20 h-20 rounded-full object-cover border-2 bg-primary border-gray-800"
-                alt={team.nome}
+                src={getFullImageUrl(application.empresa_foto) || photo} 
+                className={`w-full h-[100px] rounded-md object-contain ${application.empresa_foto ? '' : 'bg-primary'}`}
+                alt={application.empresa_foto}
               />
-              <div className="ml-3 grid">
-                <p className="font-medium text-lg text-gray-150">{team.nome}</p>
-                <p className="font-medium text-xs text-gray-150">{team.email}</p>
-                <Link
-                  to="/app/student/view/2"
-                  className="text-xs text-primary font-normal underline hover:text-primary-dark"
+              <div className="ml-3 grid gap-1">
+                <p className="font-medium text-lg text-gray-150">{application.nome}</p>
+                <Badge 
+                  variant={application.status === 'aprovada' ? 'default' : application.status === 'pendente' ? 'secondary' : 'destructive'}
+                  className={`gap-1 w-fit mb-2 ${
+                    application.status === 'pendente' ? 'bg-yellow-100 text-yellow-800' :
+                    application.status === 'aprovada' ? 'bg-green-100 text-green-800' :
+                    'bg-red-100 text-red-800'
+                  }`}
                 >
-                  Visualizar Equipe
+                  {application.status === 'pendente' && <TriangleAlert className="w-4 h-4" />}
+                  {application.status === 'aprovada' && <CheckCheck className="w-4 h-4" />}
+                  {application.status === 'recusada' && <CircleX className="w-4 h-4" />}
+                  <span className="text-xs font-semibold">
+                    {application.status === 'pendente' && 'Aguardando'}
+                    {application.status === 'aprovada' && 'Estudante selecionado'}
+                    {application.status === 'recusada' && 'Estudante não selecionado'}
+                  </span>
+                </Badge>
+                <div className="flex items-start gap-2">
+                  <Building2 className="w-4 h-4" />
+                  <strong className="font-medium text-sm text-gray-150">{application.empresa_nome}</strong>
+                </div>
+                <div className="flex items-start gap-2">
+                  <User className="w-4 h-4" />
+                  <strong className="font-medium text-sm text-gray-150">{application.estudante_nome}</strong>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Clock className="w-4 h-4" />
+                  <strong className="font-medium text-sm text-gray-150">{formatWithDateFns(application.created_at)}</strong>
+                </div>
+                <Link
+                  to={`app/student/view/${application.vaga_id}`}
+                  className="text-sm text-primary font-normal underline hover:text-primary-dark"
+                >
+                  Visualizar Vaga
                 </Link>
               </div>
             </div>
-            <Separator orientation="horizontal" className="my-4" />
-            
-            {team.status === 'pendente' && (
-              <div className='p-2 w-full border-l-4 flex items-center gap-2 bg-yellow-50 text-yellow-800 border-l-yellow-400'>
-                <TriangleAlert className="w-4 h-4 text-yellow-400" />
-                <span className="text-xs font-semibold text-yellow-800">Aguardando</span>
-              </div>
-            )}
-            {team.status === 'aprovada' && (
-              <div className='p-2 w-full border-l-4 flex items-center gap-2 bg-green-50 text-green-800 border-l-green-400'>
-                <CheckCheck className="w-4 h-4 text-green-400" />
-                <span className="text-xs font-semibold text-green-800">Equipe Recomandada</span>
-              </div>
-            )}
-            {team.status === 'recusada' && (
-              <div className='p-2 w-full border-l-4 flex items-center gap-2 bg-red-50 text-red-800 border-l-red-400'>
-                <CircleX className="w-4 h-4 text-red-800" />
-                <span className="text-xs font-semibold text-red-800">Equipe não recomendada</span>
-              </div>
-            )}
-
-            {team.status === 'pendente' && (
-              <div className="w-fit flex items-center mt-4 gap-2">
-                <CreateRecommendationSheet equipeId={team.id} />
-                <Button onClick={() => rejectRecomendation(team.id)} disabled={isPending} className="text-gray-160 flex-1 text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
-                  <CircleX className="h-4 w-4 mr-1" />
-                  Rejeitar
-                </Button>
-              </div>
-            )}
           </div>
         ))}
       </div>
@@ -135,7 +130,7 @@ export const Metrics = () => {
         <Separator orientation="horizontal" />
         <Pagination
           pageIndex={pageIndex}
-          totalCount={teams.length}
+          totalCount={applications.length}
           perPage={10}
           onPageChange={handlePaginate}
         />

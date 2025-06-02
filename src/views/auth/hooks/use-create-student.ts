@@ -1,6 +1,5 @@
 import { supabase } from "@/services/supabase";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 
@@ -29,8 +28,6 @@ interface Student {
 }
 
 export const useRegisterStudent = () => {
-  const navigate = useNavigate();
-
   const { mutate, isPending } = useMutation({
     mutationFn: async (dataForm: Student) => {
       const { data: existingUser } = await supabase
@@ -116,7 +113,6 @@ export const useRegisterStudent = () => {
           .insert({
             id: userId,
             email: dataForm.email,
-            senha: dataForm.senha,
             tipo_usuario: "estudante"
           })
           .select("id")
@@ -144,8 +140,7 @@ export const useRegisterStudent = () => {
               bairro: dataForm.endereco.bairro
             },
             descricao: dataForm.descricao || null,
-            foto: photoUrl,
-            equipe_id: null,
+            foto: photoUrl
           })
           .select("id")
           .single();
@@ -176,10 +171,6 @@ export const useRegisterStudent = () => {
 
         throw error;
       }
-    },
-
-    onSuccess: () => {
-      navigate(`/app/student`);
     },
 
     onError: (error) => {

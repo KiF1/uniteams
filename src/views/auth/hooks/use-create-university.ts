@@ -116,7 +116,6 @@ export const useRegisterUniversity = () => {
           .insert({
             id: userId,
             email: dataForm.email,
-            senha: dataForm.senha, // Nota: A senha já está criptografada no Supabase Auth
             tipo_usuario: "universidade"
           })
           .select("id")

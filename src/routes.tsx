@@ -3,7 +3,6 @@ import { AppLayout } from './views/_layouts/app'
 import { AuthLayout } from './views/_layouts/auth'
 import { SignIn } from './views/auth/sign-in'
 import { ChooseType } from './views/auth/choose-type'
-import { RegisterStudent } from './views/auth/register-student'
 import { RegisterCompany } from './views/auth/register-company'
 import { RegisterUniversity } from './views/auth/register-university'
 import { ProtectedRoute } from './protected-route'
@@ -72,7 +71,6 @@ export const router = createBrowserRouter([
     children: [
       { path: 'sign-in', element: <SignIn /> },
       { path: 'choose-type', element: <ChooseType /> },
-      { path: 'register-student', element: <RegisterStudent /> },
       { path: 'register-company', element: <RegisterCompany /> },
       { path: 'register-university', element: <RegisterUniversity /> },
     ],

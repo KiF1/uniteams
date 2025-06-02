@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2, Mail, University } from "lucide-react";
+import { Search, Loader2, Mail } from "lucide-react";
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -70,12 +70,12 @@ export const TeamSearch = () => {
 
   return (
     <div className="w-full bg-white p-6 border rounded-md border-gray-800">
-      <h2 className="text-sm font-normal text-gray-160 mb-4">Pesquisar equipes</h2>
+      <h2 className="text-sm font-normal text-gray-160 mb-4">Pesquisar Estudantes</h2>
       
       <div className="flex items-center mb-4 gap-4">
         <Input
           type="text"
-          placeholder="Nome da equipe"
+          placeholder="Nome do estudante"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -97,11 +97,11 @@ export const TeamSearch = () => {
         </div>
       ) : isError ? (
         <div className="text-red-500 p-4 bg-red-50 rounded-md">
-          Erro ao carregar equipes: {error?.message || 'Tente novamente mais tarde.'}
+          Erro ao carregar estudantes: {error?.message || 'Tente novamente mais tarde.'}
         </div>
       ) : teams.length === 0 ? (
         <span className="text-sm font-semibold text-gray-150">
-          Nenhuma equipe encontrada. Tente outra pesquisa.
+          Nenhum estudante encontrado. Tente outra pesquisa.
         </span>
       ) : (
         <>
@@ -111,7 +111,7 @@ export const TeamSearch = () => {
                 <div className="flex-1 flex items-start">
                   <img 
                     src={getFullImageUrl(team.foto) || photo} 
-                    alt={`Foto da equipe ${team.nome}`}
+                    alt={`Foto do estudante ${team.nome}`}
                     className="w-16 h-16 rounded-full object-cover border-2 bg-primary border-gray-800"
                   />
                   <div className="ml-3 grid">
@@ -119,16 +119,11 @@ export const TeamSearch = () => {
                     <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
                       <Mail className="w-3 h-3" /> {team.email || 'Sem email'}
                     </p>
-                    {team.instituicao?.nome && (
-                      <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
-                        <University className="w-3 h-3" /> {team.instituicao.nome}
-                      </p>
-                    )}
                     <Link
                       to={`/app/student/view/${team.id}`}
                       className="text-xs text-primary font-normal underline hover:text-primary-dark"
                     >
-                      Visualizar Equipe
+                      Visualizar estudante
                     </Link>
                   </div>
                 </div>

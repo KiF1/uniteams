@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AppTitle } from "@/components/app-title"
-import { TeamCarousel } from "./components/team-carousel"
 import { TeamSearch } from "./components/team-search"
 import { Metrics } from "./components/metrics"
 import { DropdownFilter } from "./components/dropdown-filter"
 import { useSearchParams } from "react-router-dom"
+import { JobsCarousel } from "./components/jobs-carousel"
 
 export const HomeUniversity = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  console.log(searchParams)
 
   const handleStatusFilter = (newStatus: string) => {
     setSearchParams((prev) => {
@@ -24,10 +24,10 @@ export const HomeUniversity = () => {
   return (
     <section className="w-full grid gap-4">
       <AppTitle title="Solicitações de Recomendação" text="Acompanhe as solicitações das equipes!" />
-      <TeamCarousel />
+      <JobsCarousel />
       <div className="grid xl:grid-cols-[0.65fr_1fr] gap-6">
-        <div className="w-full grid gap-4">
-          <AppTitle size="full" title="Equipes" text="Confira os times cadastrados no sistema!" />
+        <div className="w-full content-start grid gap-4">
+          <AppTitle size="full" title="Estudantes" text="Confira os estudantes cadastrados em sua universidade!" />
           <TeamSearch />
         </div>
         <div className="w-full h-fit grid gap-4">
@@ -35,7 +35,7 @@ export const HomeUniversity = () => {
             <AppTitle
               size="full"
               title="Indicadores de Desempenho"
-              text="Monitore em tempo real as recomendações solicitadas e concluídas"
+              text="Monitore em tempo real as aplicações em vagas!"
             />
             <DropdownFilter
               onStatusChange={handleStatusFilter} 
