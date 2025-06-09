@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AppTitle } from "@/components/app-title"
-import { TeamSearch } from "./components/team-search"
+import { StudentSearch } from "./components/student-search"
 import { Metrics } from "./components/metrics"
 import { DropdownFilter } from "./components/dropdown-filter"
 import { useSearchParams } from "react-router-dom"
 import { JobsCarousel } from "./components/jobs-carousel"
+import { AddStudentButton } from "./components/add-student"
+console.log(sessionStorage.getItem('userId'))
 
 export const HomeUniversity = () => {
   const [, setSearchParams] = useSearchParams();
@@ -28,7 +30,8 @@ export const HomeUniversity = () => {
       <div className="grid xl:grid-cols-[0.65fr_1fr] gap-6">
         <div className="w-full content-start grid gap-4">
           <AppTitle size="full" title="Estudantes" text="Confira os estudantes cadastrados em sua universidade!" />
-          <TeamSearch />
+          <AddStudentButton />
+          <StudentSearch />
         </div>
         <div className="w-full h-fit grid gap-4">
           <div className="flex items-center justify-between gap-6">

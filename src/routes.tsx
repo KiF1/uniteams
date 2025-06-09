@@ -9,12 +9,6 @@ import { ProtectedRoute } from './protected-route'
 import { HomeUniversity } from './views/app/university/home/page'
 import { EditUniversity } from './views/app/university/edit/page'
 import { ViewUniversity } from './views/app/university/view/page'
-import { HomeStudent } from './views/app/student/home/page'
-import { EditStudent } from './views/app/student/edit/page'
-import { ViewStudent } from './views/app/student/view/page'
-import { HomeStudentNoTeam } from './views/app/student/no-team/home/page'
-import { ViewStudentNoTeam } from './views/app/student/no-team/view/page'
-import { TeamForm } from './views/app/student/no-team/team-form/page'
 import { HomeCompany } from './views/app/company/home/page'
 export const router = createBrowserRouter([
   {
@@ -42,23 +36,6 @@ export const router = createBrowserRouter([
               { path: 'dashboard', element: <HomeCompany /> },
               { path: 'edit/:universityId', element: <EditUniversity /> },
               { path: 'view/:universityId', element: <ViewUniversity /> },
-            ],
-          },
-          {
-            path: 'student',
-            children: [
-              { path: 'dashboard', element: <HomeStudent /> },
-              { path: 'edit/:id', element: <EditStudent /> },
-              { path: 'view/:id', element: <ViewStudent /> },
-            ],
-          },
-          {
-            path: 'student-no-team',
-            children: [
-              { path: 'dashboard', element: <HomeStudentNoTeam /> },
-              { path: 'team', element: <TeamForm /> }, // Adicionar equipe
-              { path: 'team/:id', element: <TeamForm /> }, // Editar equipe
-              { path: 'view/:id', element: <ViewStudentNoTeam /> },
             ],
           },
         ]

@@ -28,7 +28,7 @@ export const useCreateProject = () => {
         throw new Error("Status inválido");
       }
 
-      const { data, error } = await supabase.from("projetos").insert([
+      const { data, error } = await supabase.from("vagas").insert([
         {
           nome: payload.nome,
           foto: payload.foto || null,

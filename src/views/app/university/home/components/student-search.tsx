@@ -2,29 +2,31 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Eye, MessageSquare, Loader2, Mail, University } from "lucide-react";
-import { Separator } from '@/components/ui/separator';
+import { Search, Loader2, Mail } from "lucide-react";
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getFullImageUrl } from '@/utils/photo-user';
 import photo from '@/assets/photo.png'
-import { useFetchTeam } from '../hooks/use-fetch-team';
+import { useFetchStudent } from '../hooks/use-fetch-Student';
+import { Student } from '../hooks/use-fetch-student';
+import { StudentCard } from "./student-card";
+import { AddStudentButton } from "./add-student";
 
-export const TeamSearch = () => {
+export const StudentSearch = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
   const pageIndex = z.coerce.number().transform((page) => page - 1).parse(searchParams.get('page') ?? '1');
+  const [editStudent, setEditStudent] = useState<Student | null>(null);
   
-  // Usar o hook de busca de equipes (agora com enabled controlado)
-  const { data, isLoading, isError, error, refetch } = useFetchTeam();
+  // Usar o hook de busca de estudantes
+  const { data, isLoading, isError, error, refetch } = useFetchStudent();
 
-  const teams = data?.teams || [];
+  const students = data?.students || [];
   const totalCount = data?.totalCount || 0;
 
   // Atualizar a pesquisa ao clicar no botão ou pressionar Enter
   const handleSearch = () => {
-    // Atualizar os parâmetros de URL para acionar a pesquisa
     setSearchParams((prev) => {
       if (searchInput) {
         prev.set('query', searchInput);
@@ -34,8 +36,6 @@ export const TeamSearch = () => {
       prev.set('page', '1');
       return prev;
     });
-
-    // Acionar manualmente a consulta 
     refetch();
   };
 
@@ -52,15 +52,11 @@ export const TeamSearch = () => {
     });
   };
 
-  // Recuperar o estado da pesquisa a partir da URL ao carregar a página
   useEffect(() => {
     const queryParam = searchParams.get('query');
     if (queryParam) {
       setSearchInput(queryParam);
     }
-    
-    // Realizar a primeira carga de dados quando o componente for montado
-    // (isso é opcional, remova se quiser que a pesquisa seja acionada apenas por clique)
     if (!searchParams.has('query') && !searchParams.has('page')) {
       setSearchParams((prev) => {
         prev.set('page', '1');
@@ -71,12 +67,11 @@ export const TeamSearch = () => {
 
   return (
     <div className="w-full bg-white p-6 border rounded-md border-gray-800">
-      <h2 className="text-sm font-normal text-gray-160 mb-4">Pesquisar equipes</h2>
-      
+      <h2 className="text-sm font-normal text-gray-160 mb-4">Pesquisar Estudantes</h2>
       <div className="flex items-center mb-4 gap-4">
         <Input
           type="text"
-          placeholder="Nome da equipe"
+          placeholder="Nome do estudante"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -91,57 +86,37 @@ export const TeamSearch = () => {
           <Search className="h-4 w-4 text-gray-500" />
         </Button>
       </div>
-
       {isLoading ? (
         <div className="flex justify-center items-center p-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : isError ? (
         <div className="text-red-500 p-4 bg-red-50 rounded-md">
-          Erro ao carregar equipes: {error?.message || 'Tente novamente mais tarde.'}
+          Erro ao carregar estudantes: {error?.message || 'Tente novamente mais tarde.'}
         </div>
-      ) : teams.length === 0 ? (
+      ) : students.length === 0 ? (
         <span className="text-sm font-semibold text-gray-150">
-          Nenhuma equipe encontrada. Tente outra pesquisa.
+          Nenhum estudante encontrado. Tente outra pesquisa.
         </span>
       ) : (
         <>
           <div className="space-y-4 mt-12 max-h-[350px] overflow-y-auto pr-4 mb-4">
-            {teams.map(team => (
-              <div key={team.id} className="flex flex-col md:flex-row items-center justify-between border-b border-gray-800 pb-6">
-                <div className="flex-1 flex items-start">
-                  <img 
-                    src={getFullImageUrl(team.foto) || photo} 
-                    alt={`Foto da equipe ${team.nome}`}
-                    className="w-16 h-16 rounded-full object-cover border-2 bg-primary border-gray-800"
-                  />
-                  <div className="ml-3 grid">
-                    <p className="font-medium text-base text-gray-150">{team.nome}</p>
-                    <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
-                      <Mail className="w-3 h-3" /> {team.email || 'Sem email'}
-                    </p>
-                    {team.instituicao?.nome && (
-                      <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
-                        <University className="w-3 h-3" /> {team.instituicao.nome}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
-
-                <div className="w-fit grid grid-cols-2 md:grid-cols-1 md:justify-items-end gap-2">
-                  <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
-                    <Eye className="h-4 w-4 mr-1" />
-                    Visualizar
-                  </Button>
-                  <Button className="text-gray-160 w-fit text-sm border flex items-center gap-2 border-gray-800 rounded-md bg-transparent">
-                    <MessageSquare className="h-4 w-4 mr-1" />
-                    Contato
-                  </Button>
-                </div>
+            {students.map(student => (
+              <div key={student.id} className="items-center justify-between border-b border-gray-800 pb-6">
+                <StudentCard student={student} />
+              
               </div>
             ))}
           </div>
+          {editStudent && (
+            <AddStudentButton
+              initialData={editStudent}
+              onEdit={() => {
+                setEditStudent(null);
+                refetch();
+              }}
+            />
+          )}
           <div className="grid gap-4 pr-8 mt-auto">
             <Pagination
               pageIndex={pageIndex}
