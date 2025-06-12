@@ -1,7 +1,7 @@
 import { AppTitle } from "@/components/app-title"
 import { ProjectCarousel } from "./components/company-carousel"
-import { TeamSearch } from "./components/team-search"
-import { Metrics } from "./components/metrics"
+import { UniversitySearch } from "./components/university-search"
+import { Recomedations } from "./components/recomendations"
 import { DropdownFilter } from "./components/dropdown-filter"
 import { useSearchParams } from "react-router-dom"
 import { CreateProjectSheet } from "./components/project";
@@ -31,7 +31,7 @@ export const HomeCompany = () => {
       <div className="grid xl:grid-cols-[0.65fr_1fr] gap-6">
         <div className="w-full grid gap-4">
           <AppTitle size="full" title="Equipes" text="Confira os times cadastrados no sistema!" />
-          <TeamSearch />
+          <UniversitySearch />
         </div>
         <div className="w-full h-fit grid gap-4">
           <div className="flex items-center justify-between gap-6">
@@ -42,7 +42,7 @@ export const HomeCompany = () => {
             />
             <DropdownFilter onStatusChange={handleStatusFilter} />
           </div>
-          <Metrics />
+          <Recomedations />
         </div>
       </div>
     </section>

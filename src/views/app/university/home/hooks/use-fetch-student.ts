@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 
 // Interface usada para nosso componente
-export interface Team {
+export interface Student {
   id: string;
   nome: string;
   foto: string;
@@ -15,50 +15,47 @@ export interface Team {
   };
 }
 
-export const useFetchTeam = () => {
+export const useFetchStudent = () => {
   const [searchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const searchQuery = searchParams.get("query"); // Alterado para "query" para corresponder ao seu componente
   const userLogged = sessionStorage.getItem('userId');
   
-  return useQuery<{ teams: Team[]; totalCount: number }>({
-    queryKey: ["teams", page, searchQuery],
+  return useQuery<{ students: Student[]; totalCount: number }>({
+    queryKey: ["estudantes", page, searchQuery],
     queryFn: async () => {
       let query = supabase
         .from("estudantes")
-        .select(`*`, { count: "exact" })
-        .eq('universidade_id', userLogged);
-      
+        .select("*", { count: "exact" })
+        .eq("universidade_id", userLogged);
+
       if (searchQuery) {
         query = query.ilike("nome", `%${searchQuery}%`);
       }
-      
-      // Adicionar paginação e ordenação (as 10 últimas equipes cadastradas)
+
       const { data, error, count } = await query
         .order("created_at", { ascending: false })
-        .range((page - 1) * 10, (page - 1) * 10 + 9); // Corrigido para usar page-1 e inclusão até 9
-      
+        .range((page - 1) * 10, (page - 1) * 10 + 9);
+
       if (error) {
-        throw new Error(`Erro ao buscar equipes: ${error.message}`);
+        throw new Error(`Erro ao buscar estudantes: ${error.message}`);
       }
-      
-      // Mapear dados para garantir que correspondam ao tipo Team
-      const mappedTeams: Team[] = (data || []).map((item: any) => ({
+
+      const mappedStudents: Student[] = (data || []).map((item: any) => ({
         id: item.id,
         nome: item.nome,
         foto: item.foto,
         email: item.email,
         created_at: item.created_at,
+        instituicao: item.instituicao ? { nome: item.instituicao.nome } : undefined,
       }));
-      
+
       return {
-        teams: mappedTeams,
-        totalCount: count || 0
+        students: mappedStudents,
+        totalCount: count || 0,
       };
     },
-    // Só executar a query se for a primeira página sem busca (carregamento inicial)
-    // ou se houver uma busca explícita (botão clicado)
-    enabled: searchParams.has("page") || searchParams.has("query"),
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    enabled: !!userLogged,
+    staleTime: 1000 * 60 * 5,
   });
 };

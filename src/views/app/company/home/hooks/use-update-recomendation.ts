@@ -42,10 +42,9 @@ export const useUpdateRecommendation = (status: 'aprovada' | 'recusada') => {
 
       // Atualiza a recomendação existente
       const { data: updatedRecommendation, error: updateError } = await supabase
-        .from("recomendacoes_universidade")
+        .from("aplicacoes")
         .update(updateData)
         .eq("universidade_id", universidadeId)
-        .eq("equipe_id", data.equipe_id)
         .eq("status", "pendente") // Garante que só atualiza se estiver pendente
         .select()
         .single();
