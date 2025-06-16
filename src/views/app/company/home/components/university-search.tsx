@@ -2,13 +2,11 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Eye, MessageSquare, Loader2, Mail, University } from "lucide-react";
+import { Search, Eye, MessageSquare, Loader2, University } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
 import { useSearchParams } from 'react-router-dom';
-import { getFullImageUrl } from '@/utils/photo-user';
-import photo from '@/assets/photo.png'
 import { useFetchUniversity } from '../hooks/use-fetch-students';
 
 export const UniversitySearch = () => {

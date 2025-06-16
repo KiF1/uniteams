@@ -1,8 +1,8 @@
-import { Student } from "../hooks/use-fetch-student";
 import { Card } from "@/components/ui/card";
 import { Mail } from "lucide-react";
 import photo from '@/assets/photo.png';
 import { getFullImageUrl } from '@/utils/photo-user';
+import { Student } from '../hooks/use-fetch-student';
 
 interface StudentCardProps {
   student: Student;

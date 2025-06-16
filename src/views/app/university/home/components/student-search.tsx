@@ -2,14 +2,11 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2, Mail } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
-import { Link, useSearchParams } from 'react-router-dom';
-import { getFullImageUrl } from '@/utils/photo-user';
-import photo from '@/assets/photo.png'
-import { useFetchStudent } from '../hooks/use-fetch-Student';
-import { Student } from '../hooks/use-fetch-student';
+import { useSearchParams } from 'react-router-dom';
+import { Student, useFetchStudent } from '../hooks/use-fetch-student';
 import { StudentCard } from "./student-card";
 import { AddStudentButton } from "./add-student";
 
@@ -22,7 +19,7 @@ export const StudentSearch = () => {
   // Usar o hook de busca de estudantes
   const { data, isLoading, isError, error, refetch } = useFetchStudent();
 
-  const students = data?.students || [];
+  const students: Student[] = data?.students || [];
   const totalCount = data?.totalCount || 0;
 
   // Atualizar a pesquisa ao clicar no botão ou pressionar Enter
@@ -101,7 +98,7 @@ export const StudentSearch = () => {
       ) : (
         <>
           <div className="space-y-4 mt-12 max-h-[350px] overflow-y-auto pr-4 mb-4">
-            {students.map(student => (
+            {students.map((student: Student) => (
               <div key={student.id} className="items-center justify-between border-b border-gray-800 pb-6">
                 <StudentCard student={student} />
               
