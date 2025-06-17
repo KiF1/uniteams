@@ -8,9 +8,9 @@ import { Building2, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useFetchStudent } from '../hooks/use-fetch-student';
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from '@/services/supabase';
+import { Student, useFetchStudent } from '../hooks/use-fetch-student';
 
 interface Props {
   job: OpenJob;
@@ -19,7 +19,7 @@ interface Props {
 export const JobCard = ({ job }: Props) => {
   const [open, setOpen] = useState(false);
   const { data, isLoading } = useFetchStudent();
-  const students = data?.students || [];
+  const students: Student[] = data?.students || [];
   const universidade_id = sessionStorage.getItem('userId');
 
   const recommendMutation = useMutation({
@@ -75,7 +75,7 @@ export const JobCard = ({ job }: Props) => {
                         <div>Carregando alunos...</div>
                       ) : (
                         <div className="max-h-60 overflow-y-auto space-y-2">
-                          {students.map(student => (
+                          {students.map((student: Student) => (
                             <div key={student.id} className="flex items-center justify-between border-b pb-2">
                               <div className="flex items-center gap-2">
                                 <span className="font-medium text-sm">{student.nome}</span>

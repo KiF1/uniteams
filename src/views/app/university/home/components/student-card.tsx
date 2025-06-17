@@ -1,4 +1,3 @@
-import { Student } from "../hooks/use-fetch-student";
 import { Card } from "@/components/ui/card";
 import { Mail } from "lucide-react";
 import photo from '@/assets/photo.png';

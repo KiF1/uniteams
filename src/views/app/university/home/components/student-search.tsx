@@ -20,7 +20,7 @@ export const StudentSearch = () => {
   // Usar o hook de busca de estudantes
   const { data, isLoading, isError, error, refetch } = useFetchStudent();
 
-  const students = data?.students || [];
+  const students: Student[] = data?.students || [];
   const totalCount = data?.totalCount || 0;
 
   // Atualizar a pesquisa ao clicar no botão ou pressionar Enter
@@ -99,7 +99,7 @@ export const StudentSearch = () => {
       ) : (
         <>
           <div className="space-y-4 mt-12 max-h-[350px] overflow-y-auto pr-4 mb-4">
-            {students.map(student => (
+            {students.map((student: Student) => (
               <div key={student.id} className="items-center justify-between border-b border-gray-800 pb-6">
                 <StudentCard student={student} />
               
