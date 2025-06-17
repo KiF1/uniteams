@@ -5,6 +5,7 @@ import { getFullImageUrl } from '@/utils/photo-user';
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { StudentModal } from "./student-modal";
+import { Student } from "../hooks/use-fetch-student";
 
 interface StudentCardProps {
   student: Student;
