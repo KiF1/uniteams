@@ -27,16 +27,21 @@ export const useUpdateRecommendation = (status: 'aprovada' | 'recusada') => {
         updated_at: timestamp,
       };
 
-      if (status === "aprovada") {
-        if (!data.nome_responsavel || !data.email_responsavel || !data.cargo_responsavel) {
-          throw new Error("Dados do responsável são obrigatórios para aprovação");
-        }
-        updateData.nome_responsavel = data.nome_responsavel;
-        updateData.email_responsavel = data.email_responsavel;
-        updateData.cargo_responsavel = data.cargo_responsavel;
-        updateData.descricao = data.descricao || null;
+      // Não exige mais dados de responsável para aprovação
+      // Apenas atualiza o status
+
+      // Busca a aplicação para obter o vaga_id
+      const { data: aplicacao, error: fetchError } = await supabase
+        .from("aplicacoes")
+        .select("vaga_id")
+        .eq("id", data.equipe_id)
+        .maybeSingle();
+
+      if (fetchError || !aplicacao) {
+        throw new Error("Não foi possível encontrar a aplicação para atualizar.");
       }
 
+      // Atualiza a aplicação selecionada
       const { data: updated, error } = await supabase
         .from("aplicacoes")
         .update(updateData)
@@ -53,12 +58,29 @@ export const useUpdateRecommendation = (status: 'aprovada' | 'recusada') => {
         throw new Error("Nenhuma recomendação pendente encontrada para esta equipe.");
       }
 
+      // Se for aprovação, recusa as outras aplicações da mesma vaga e fecha a vaga
+      if (status === "aprovada") {
+        await supabase
+          .from("aplicacoes")
+          .update({ status: "recusada", updated_at: timestamp })
+          .eq("vaga_id", aplicacao.vaga_id)
+          .neq("id", data.equipe_id)
+          .eq("status", "pendente");
+
+        // Atualiza o status da vaga para "finalizado"
+        await supabase
+          .from("vagas")
+          .update({ status: "finalizado", updated_at: timestamp })
+          .eq("id", aplicacao.vaga_id);
+      }
+
       return updated;
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recommendations"] });
       queryClient.invalidateQueries({ queryKey: ["recommendationRequests"] });
+      queryClient.invalidateQueries(); // força atualização de todos os dados relacionados
 
       if (status === "aprovada") {
         toast.success("Indicação contratada com sucesso!", {

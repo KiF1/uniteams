@@ -9,7 +9,7 @@ export const Recomedations = () => {
   const { mutate: approve } = useUpdateRecommendation("aprovada");
   const { mutate: reject } = useUpdateRecommendation("recusada");
   const [approveForm, setApproveForm] = useState<{ [key: string]: boolean }>({});
-  const [approveData, setApproveData] = useState<{ [key: string]: any }>({});
+  const [, setApproveData] = useState<{ [key: string]: any }>({});
 
   if (isLoading) return <div>Carregando...</div>;
   if (error) return <div>Erro ao carregar recomendações</div>;
@@ -22,13 +22,8 @@ export const Recomedations = () => {
   //   // ...código não utilizado...
   // }
   const handleApproveSubmit = (aplicacaoId: string) => {
-    const data = approveData[aplicacaoId] || {};
     approve({
       equipe_id: aplicacaoId,
-      nome_responsavel: data.nome_responsavel,
-      email_responsavel: data.email_responsavel,
-      cargo_responsavel: data.cargo_responsavel,
-      descricao: data.descricao,
     });
     setApproveForm((prev) => ({ ...prev, [aplicacaoId]: false }));
     setApproveData((prev) => ({ ...prev, [aplicacaoId]: {} }));
