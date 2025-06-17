@@ -2,19 +2,22 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Eye, MessageSquare, Loader2, Mail, University } from "lucide-react";
+import { Search, Eye, MessageSquare, Loader2 } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
 import { useSearchParams } from 'react-router-dom';
 import { getFullImageUrl } from '@/utils/photo-user';
 import photo from '@/assets/photo.png'
-import { useFetchUniversity } from '../hooks/use-fetch-students';
+import { useFetchUniversity } from '../hooks/fetch-university';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 
 export const UniversitySearch = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
   const pageIndex = z.coerce.number().transform((page) => page - 1).parse(searchParams.get('page') ?? '1');
+  const [selectedUniversity, setSelectedUniversity] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   
   // Usar o hook de busca de universidades
   const { data, isLoading, isError, error, refetch } = useFetchUniversity();
@@ -105,11 +108,9 @@ export const UniversitySearch = () => {
                 <div className="flex-1 flex items-start">
                   <div className="ml-3 grid">
                     <p className="font-medium text-base text-gray-150">{university.nome}</p>
-                    {university.sigla && (
-                      <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
-                        <University className="w-3 h-3" /> {university.sigla}
-                      </p>
-                    )}
+                    <p className="text-xs text-gray-500 mb-1">
+                      {university.estudantes?.length || 0} aluno{(university.estudantes?.length === 1 ? '' : 's')} cadastrado{(university.estudantes?.length === 1 ? '' : 's')}
+                    </p>
                     {(university.cidade || university.estado) && (
                       <p className="font-medium text-xs text-gray-150 flex items-center gap-2">
                         {university.cidade}{university.cidade && university.estado ? ', ' : ''}{university.estado}
@@ -120,7 +121,13 @@ export const UniversitySearch = () => {
                 <Separator orientation="vertical" className="hidden md:block mx-4 h-20" />
 
                 <div className="w-fit grid grid-cols-2 md:grid-cols-1 md:justify-items-end gap-2">
-                  <Button className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1">
+                  <Button
+                    className="bg-primary w-fit text-white rounded-md flex items-center px-3 py-1"
+                    onClick={() => {
+                      setSelectedUniversity(university.id);
+                      setModalOpen(true);
+                    }}
+                  >
                     <Eye className="h-4 w-4 mr-1" />
                     Visualizar
                   </Button>
@@ -132,6 +139,42 @@ export const UniversitySearch = () => {
               </div>
             ))}
           </div>
+          {/* Modal para exibir estudantes */}
+          <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Estudantes</DialogTitle>
+              </DialogHeader>
+              {(() => {
+                const selected = universities.find(u => u.id === selectedUniversity);
+                const estudantes = selected?.estudantes ?? [];
+                if (!selected) return <span className="text-sm text-gray-500">Universidade não encontrada.</span>;
+                return estudantes.length === 0 ? (
+                  <span className="text-sm text-gray-500">Nenhum estudante cadastrado nesta universidade.</span>
+                ) : (
+                  <ul className="space-y-2 max-h-96 overflow-y-auto pr-2">
+                    {estudantes.map(est => (
+                      <li key={est.id} className="flex items-center gap-3">
+                        <img
+                          src={getFullImageUrl(est.foto) || photo}
+                          alt={`Foto do estudante ${est.nome}`}
+                          className="w-8 h-8 rounded-full object-cover border border-gray-400"
+                        />
+                        <span className="font-medium text-gray-900">{est.nome}</span>
+                        <span className="text-xs text-gray-500">{est.email}</span>
+                        <span className="text-xs text-gray-400 ml-auto">{new Date(est.created_at).toLocaleDateString('pt-BR')}</span>
+                      </li>
+                    ))}
+                  </ul>
+                );
+              })()}
+              <DialogClose asChild>
+                <Button variant="ghost" className="mt-4 w-full" onClick={() => setSelectedUniversity(null)}>
+                  Fechar
+                </Button>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
           <div className="grid gap-4 pr-8 mt-auto">
             <Pagination
               pageIndex={pageIndex}

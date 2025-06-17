@@ -2,13 +2,11 @@
 import { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2, Mail } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { Pagination } from '@/components/pagination';
 import { z } from 'zod';
-import { Link, useSearchParams } from 'react-router-dom';
-import { getFullImageUrl } from '@/utils/photo-user';
-import photo from '@/assets/photo.png'
-import { useFetchStudent } from '../hooks/use-fetch-Student';
+import { useSearchParams } from 'react-router-dom';
+import { useFetchStudent } from '../hooks/use-fetch-student';
 import { Student } from '../hooks/use-fetch-student';
 import { StudentCard } from "./student-card";
 import { AddStudentButton } from "./add-student";

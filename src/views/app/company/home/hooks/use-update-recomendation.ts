@@ -12,70 +12,65 @@ interface UpdateRecommendationData {
 
 export const useUpdateRecommendation = (status: 'aprovada' | 'recusada') => {
   const queryClient = useQueryClient();
-  const universidadeId = sessionStorage.getItem('userId');
+  const empresaId = sessionStorage.getItem('userId');
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: UpdateRecommendationData) => {
-      if (!universidadeId) {
-        throw new Error("ID da universidade não encontrado");
+      if (!empresaId) {
+        throw new Error("ID da empresa não encontrado");
       }
 
       const timestamp = new Date().toISOString();
-      
-      // Prepara os dados para atualização
+
       const updateData: any = {
-        status: status,
+        status,
         updated_at: timestamp,
       };
 
-      // Se for aprovada, adiciona os dados adicionais obrigatórios
-      if (status === 'aprovada') {
+      if (status === "aprovada") {
         if (!data.nome_responsavel || !data.email_responsavel || !data.cargo_responsavel) {
           throw new Error("Dados do responsável são obrigatórios para aprovação");
         }
-
         updateData.nome_responsavel = data.nome_responsavel;
         updateData.email_responsavel = data.email_responsavel;
         updateData.cargo_responsavel = data.cargo_responsavel;
         updateData.descricao = data.descricao || null;
       }
 
-      // Atualiza a recomendação existente
-      const { data: updatedRecommendation, error: updateError } = await supabase
+      const { data: updated, error } = await supabase
         .from("aplicacoes")
         .update(updateData)
-        .eq("universidade_id", universidadeId)
-        .eq("status", "pendente") // Garante que só atualiza se estiver pendente
+        .eq("id", data.equipe_id)
+        .eq("status", "pendente")
         .select()
-        .single();
+        .maybeSingle();
 
-      if (updateError) {
-        throw new Error(`Erro ao atualizar recomendação: ${updateError.message}`);
+      if (error) {
+        throw new Error(`Erro ao atualizar recomendação: ${error.message}`);
       }
 
-      if (!updatedRecommendation) {
-        throw new Error("Nenhuma recomendação pendente encontrada para esta equipe");
+      if (!updated) {
+        throw new Error("Nenhuma recomendação pendente encontrada para esta equipe.");
       }
 
-      return updatedRecommendation;
+      return updated;
     },
 
     onSuccess: () => {
-      // Invalidate and refetch recommendations data
       queryClient.invalidateQueries({ queryKey: ["recommendations"] });
       queryClient.invalidateQueries({ queryKey: ["recommendationRequests"] });
-      
-      if (status === 'aprovada') {
-        toast.success("Recomendação aprovada com sucesso!", {
-          description: "A equipe foi recomendada pela universidade.",
+
+      if (status === "aprovada") {
+        toast.success("Indicação contratada com sucesso!", {
+          description: "A equipe foi contratada pela empresa.",
           classNames: {
             title: "text-green-500",
             icon: "group-data-[type=success]:text-green-500",
           },
         });
       } else {
-        toast.success("Recomendação rejeitada com sucesso!", {
-          description: "A equipe foi rejeitada pela universidade.",
+        toast.success("Indicação recusada com sucesso!", {
+          description: "A equipe foi recusada pela empresa.",
           classNames: {
             title: "text-green-500",
             icon: "group-data-[type=success]:text-green-500",
@@ -85,9 +80,9 @@ export const useUpdateRecommendation = (status: 'aprovada' | 'recusada') => {
     },
 
     onError: (error) => {
-      const action = status === 'aprovada' ? 'aprovar' : 'rejeitar';
-      toast.error(`Erro ao ${action} recomendação`, {
-        description: error.message || `Não foi possível ${action} a recomendação.`,
+      const action = status === "aprovada" ? "contratar" : "recusar";
+      toast.error(`Erro ao ${action} indicação`, {
+        description: error.message || `Não foi possível ${action} a indicação.`,
         classNames: {
           title: "text-red-500",
           icon: "group-data-[type=error]:text-red-500",

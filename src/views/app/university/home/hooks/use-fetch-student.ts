@@ -9,6 +9,8 @@ export interface Student {
   nome: string;
   foto: string;
   email?: string;
+  matricula?: string;
+  telefone?: string;
   created_at: string;
   instituicao?: {
     nome: string;
@@ -18,16 +20,27 @@ export interface Student {
 export const useFetchStudent = () => {
   const [searchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
-  const searchQuery = searchParams.get("query"); // Alterado para "query" para corresponder ao seu componente
+  const searchQuery = searchParams.get("query");
   const userLogged = sessionStorage.getItem('userId');
-  
+
   return useQuery<{ students: Student[]; totalCount: number }>({
     queryKey: ["estudantes", page, searchQuery],
     queryFn: async () => {
+      // Buscar universidade_id do usuário logado
+      const { data: universidadeData } = await supabase
+        .from("universidades")
+        .select("id, nome")
+        .eq("id", userLogged)
+        .single();
+
+      if (!universidadeData) {
+        throw new Error("Universidade não encontrada.");
+      }
+
       let query = supabase
         .from("estudantes")
-        .select("*", { count: "exact" })
-        .eq("universidade_id", userLogged);
+        .select("id, nome, foto, email, created_at, universidade_id, telefone, matricula, instituicao:universidade_id(nome)", { count: "exact" })
+        .eq("universidade_id", universidadeData.id);
 
       if (searchQuery) {
         query = query.ilike("nome", `%${searchQuery}%`);

@@ -17,15 +17,10 @@ export const Recomedations = () => {
   const handleApproveClick = (aplicacaoId: string) => {
     setApproveForm((prev) => ({ ...prev, [aplicacaoId]: true }));
   };
-  const handleApproveChange = (aplicacaoId: string, field: string, value: string) => {
-    setApproveData((prev) => ({
-      ...prev,
-      [aplicacaoId]: {
-        ...prev[aplicacaoId],
-        [field]: value,
-      },
-    }));
-  };
+  // Remova ou comente a função não utilizada
+  // const handleApproveChange = (aplicacaoId: string, field: string, value: string) => {
+  //   // ...código não utilizado...
+  // }
   const handleApproveSubmit = (aplicacaoId: string) => {
     const data = approveData[aplicacaoId] || {};
     approve({
@@ -47,42 +42,20 @@ export const Recomedations = () => {
             <strong>ID da Vaga:</strong> {aplicacao.vaga_id} <span className="text-xs text-gray-400">Candidato: {aplicacao.candidato_id}</span>
           </div>
           <div>Status: <span className="capitalize">{aplicacao.status}</span></div>
+       
           {aplicacao.status === "pendente" && (
             <div className="flex flex-col gap-2 mt-2">
               {approveForm[aplicacao.id] ? (
                 <div className="flex flex-col gap-2">
-                  <input
-                    className="border rounded px-2 py-1 text-sm"
-                    placeholder="Nome do responsável"
-                    value={approveData[aplicacao.id]?.nome_responsavel || ''}
-                    onChange={e => handleApproveChange(aplicacao.id, 'nome_responsavel', e.target.value)}
-                  />
-                  <input
-                    className="border rounded px-2 py-1 text-sm"
-                    placeholder="E-mail do responsável"
-                    value={approveData[aplicacao.id]?.email_responsavel || ''}
-                    onChange={e => handleApproveChange(aplicacao.id, 'email_responsavel', e.target.value)}
-                  />
-                  <input
-                    className="border rounded px-2 py-1 text-sm"
-                    placeholder="Cargo do responsável"
-                    value={approveData[aplicacao.id]?.cargo_responsavel || ''}
-                    onChange={e => handleApproveChange(aplicacao.id, 'cargo_responsavel', e.target.value)}
-                  />
-                  <textarea
-                    className="border rounded px-2 py-1 text-sm"
-                    placeholder="Descrição (opcional)"
-                    value={approveData[aplicacao.id]?.descricao || ''}
-                    onChange={e => handleApproveChange(aplicacao.id, 'descricao', e.target.value)}
-                  />
+                 
                   <div className="flex gap-2 mt-2">
-                    <Button onClick={() => handleApproveSubmit(aplicacao.id)} className="bg-green-600 text-white text-sm flex-1">Confirmar Aprovação</Button>
+                    <Button onClick={() => handleApproveSubmit(aplicacao.id)} className="bg-green-600 text-white text-sm flex-1">Confirmar Contratação</Button>
                     <Button variant="outline" onClick={() => setApproveForm(prev => ({ ...prev, [aplicacao.id]: false }))} className="text-gray-400 border-gray-700 flex-1">Cancelar</Button>
                   </div>
                 </div>
               ) : (
                 <div className="flex gap-2">
-                  <Button onClick={() => handleApproveClick(aplicacao.id)} className="bg-green-600 text-white text-sm flex-1">Aprovar</Button>
+                  <Button onClick={() => handleApproveClick(aplicacao.id)} className="bg-green-600 text-white text-sm flex-1">Contratar</Button>
                   <Button onClick={() => reject({ equipe_id: aplicacao.id })} className="bg-red-600 text-white text-sm flex-1">Recusar</Button>
                 </div>
               )}

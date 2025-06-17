@@ -8,7 +8,7 @@ import { CheckCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUpdateRecommendation } from "../hooks/use-update-recomendation";
+import { useUpdateRecommendation } from "../hooks/use-update-recommendation";
 
 const formSchema = z.object({
   equipe_id: z.string(),
@@ -42,7 +42,7 @@ export const CreateRecommendationSheet = ({ equipeId }: CreateRecommendationShee
     },
   });
 
-  const { mutate, isPending } = useUpdateRecommendation('aprovada');
+  const { mutate, isPending } = useUpdateRecommendation();
 
   const handleSubmit = async (data: FormData) => {
     mutate(data, { 
